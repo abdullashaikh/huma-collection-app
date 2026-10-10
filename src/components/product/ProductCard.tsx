@@ -1,0 +1,252 @@
+'use client';
+
+import { ArrowRight, Check, Eye, Heart, MessageCircle, ShoppingBag, Sparkles } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import React, { useState } from 'react';
+import { useCart } from '../../lib/cart-context';
+import { Product } from '../../types';
+import { InteractiveProductViewer } from './InteractiveProductViewer';
+
+interface ProductCardProps {
+  product: Product;
+}
+
+export function ProductCard({ product }: ProductCardProps) {
+  const { addToCart, isLoading } = useCart();
+  const [selectedVariantId, setSelectedVariantId] = useState<number | null>(
+    product.variants && product.variants.length > 0 ? product.variants[0].id : null
+  );
+  const [isAddedRecently, setIsAddedRecently] = useState(false);
+  const [isWishlisted, setIsWishlisted] = useState(false);
+
+  const primaryImage =
+    product.primary_image_url ||
+    product.images?.find((img) => img.isPrimary)?.s3Url ||
+    'https://images.unsplash.com/photo-1584282479901-705a6104bc99?auto=format&fit=crop&w=800&q=80';
+
+  const secondaryImage =
+    product.secondary_image_url ||
+    product.images?.find((img) => !img.isPrimary)?.s3Url ||
+    primaryImage;
+
+  // Collect all available views for the interactive viewer
+  const viewerImages = React.useMemo(() => {
+    // 1. If explicit 360 sequence is configured
+    if (product.images_360 && product.images_360.length > 0) {
+      return product.images_360;
+    }
+
+    // 2. If configured with structured views object
+    if (product.views) {
+      const viewsList: string[] = [];
+      if (product.views.front) viewsList.push(product.views.front);
+      if (product.views.side) viewsList.push(product.views.side);
+      if (product.views.back) viewsList.push(product.views.back);
+      if (product.views.detail) viewsList.push(product.views.detail);
+      if (viewsList.length > 0) return viewsList;
+    }
+
+    // 3. If product has multiple images in images array
+    if (product.images && product.images.length > 0) {
+      const sorted = [...product.images].sort((a, b) => {
+        if (a.isPrimary) return -1;
+        if (b.isPrimary) return 1;
+        return (a.sortOrder || 0) - (b.sortOrder || 0);
+      });
+      return sorted.map((img) => ({
+        url: img.s3Url,
+        alt: img.altText || product.name,
+        label: img.viewType || (img.isPrimary ? 'Front View' : undefined),
+      }));
+    }
+
+    // 4. Default to primary and secondary
+    const list: string[] = [primaryImage];
+    if (secondaryImage && secondaryImage !== primaryImage) {
+      list.push(secondaryImage);
+    }
+    return list;
+  }, [product, primaryImage, secondaryImage]);
+
+  const handleQuickAdd = async (e: React.MouseEvent, variantId: number) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      await addToCart(variantId, 1);
+      setIsAddedRecently(true);
+      setTimeout(() => setIsAddedRecently(false), 2000);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // Extract and normalize pricing safely
+  const rawBase = product.basePrice ?? (product as any).base_price;
+  const rawSale = product.salePrice ?? (product as any).sale_price;
+  const basePrice = rawBase !== undefined && rawBase !== null ? Number(rawBase) : 0;
+  const salePrice = rawSale !== undefined && rawSale !== null ? Number(rawSale) : null;
+  const displayPrice = salePrice && salePrice > 0 ? salePrice : basePrice;
+
+  const skuCode = product.skuBase || (product as any).sku_base || '';
+  const shortDesc = product.shortDescription || (product as any).short_description || '';
+
+  // WhatsApp Pre-filled message generator
+  const getWhatsAppLink = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const phone = process.env.NEXT_PUBLIC_WHATSAPP || '+919876543210';
+    const message = encodeURIComponent(
+      `Assalamu Alaikum, I would like to inquire about this product:\n\n*${product.name}*\nSKU: ${skuCode}\nPrice: ₹${displayPrice}\n\nCould you please help me with availability and sizing?`
+    );
+    window.open(`https://wa.me/${phone.replace(/[^0-9]/g, '')}?text=${message}`, '_blank');
+  };
+
+  const discountPercent =
+    salePrice && basePrice > salePrice
+      ? Math.round(((basePrice - salePrice) / basePrice) * 100)
+      : null;
+
+  // Deduplicate variants by unique size label to eliminate duplicate buttons
+  const uniqueVariants = React.useMemo(() => {
+    if (!product.variants || product.variants.length === 0) return [];
+    const seen = new Set<string>();
+    const list: typeof product.variants = [];
+    for (const v of product.variants) {
+      const label = v.size_value ? v.size_value.split(' ')[0] : v.sku.split('-')[3] || 'STD';
+      if (!seen.has(label)) {
+        seen.add(label);
+        list.push(v);
+      }
+    }
+    return list.slice(0, 4);
+  }, [product.variants]);
+
+  return (
+    <div className="group relative flex flex-col bg-white rounded-2xl overflow-hidden border border-stone-200/80 shadow-luxury hover:shadow-luxury-hover hover:-translate-y-1 transition-all duration-500">
+      {/* Media Container (3:4 aspect ratio) */}
+      <Link href={`/burqa/${product.slug}`} className="relative aspect-[3/4] w-full overflow-hidden bg-stone-100 block">
+        {/* Interactive Multi-View & 360 Product Image Viewer */}
+        <InteractiveProductViewer
+          images={viewerImages}
+          productName={product.name}
+          aspectRatio="aspect-[3/4]"
+          priority={product.isFeatured}
+          is360Sequence={Boolean(product.is_360 || (product.images_360 && product.images_360.length > 0))}
+          showIndicators={viewerImages.length > 1}
+          show360Badge={Boolean(product.is_360 || (product.images_360 && product.images_360.length > 0))}
+          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+          returnToDefaultOnLeave={true}
+        />
+
+        {/* Floating Priority Badge (Consolidated - Max 1 priority badge to prevent visual clutter) */}
+        <div className="absolute top-3 left-3 z-10 pointer-events-none">
+          {product.isBestseller ? (
+            <span className="px-3 py-1.5 text-xs font-semibold bg-brand-obsidian text-brand-gold rounded-full shadow-md flex items-center gap-1.5 backdrop-blur-sm">
+              <Sparkles className="w-3.5 h-3.5 text-brand-gold" /> Bestseller
+            </span>
+          ) : product.isNewArrival ? (
+            <span className="px-3 py-1.5 text-xs font-semibold bg-brand-emerald text-white rounded-full shadow-md backdrop-blur-sm">
+              New Arrival
+            </span>
+          ) : null}
+        </div>
+
+        {/* Wishlist Action (Standalone, comfortable touch target min 40px) */}
+        <div className="absolute top-3 right-3 z-10">
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setIsWishlisted(!isWishlisted);
+            }}
+            className="w-10 h-10 rounded-full bg-white/95 backdrop-blur-sm shadow-md hover:bg-white text-stone-700 hover:text-red-500 transition-all flex items-center justify-center active:scale-95"
+            title="Add to Wishlist"
+            aria-label="Wishlist"
+          >
+            <Heart className={`w-4 h-4 ${isWishlisted ? 'fill-red-500 text-red-500' : ''}`} />
+          </button>
+        </div>
+
+        {/* Available Sizes Badge on Hover (Showcase Mode) */}
+        {uniqueVariants.length > 0 && (
+          <div className="absolute inset-x-2 bottom-2 z-10 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none">
+            <div className="bg-white/95 backdrop-blur-md rounded-xl p-2.5 shadow-lg border border-stone-200 text-center">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-stone-500 mb-1.5">
+                Available In-Store Sizing
+              </p>
+              <div className="flex items-center justify-center gap-1.5 flex-wrap">
+                {uniqueVariants.map((v) => {
+                  const sizeLabel = v.size_value ? v.size_value.split(' ')[0] : v.sku.split('-')[3] || 'STD';
+                  return (
+                    <span
+                      key={v.id}
+                      className="text-[11px] font-bold px-2.5 py-1 rounded-md bg-stone-100 text-stone-800 border border-stone-200"
+                    >
+                      {sizeLabel}
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+      </Link>
+
+      {/* Information Container */}
+      <div className="p-4 flex flex-col flex-1 justify-between">
+        <div>
+          {/* Category / Fabric label */}
+          <span className="text-xs font-semibold text-brand-gold-dark tracking-wide block">
+            {product.categoryName || (product.fabric && product.fabric !== 'N/A' ? product.fabric : 'Modest Essential')}
+          </span>
+
+          {/* Product Title */}
+          <Link href={`/burqa/${product.slug}`} className="block mt-1">
+            <h3 className="font-serif text-base font-semibold text-brand-obsidian line-clamp-1 group-hover:text-brand-gold-dark transition-colors">
+              {product.name}
+            </h3>
+          </Link>
+
+          {/* Short description */}
+          {shortDesc && (
+            <p className="text-xs text-stone-600 line-clamp-1 mt-1">
+              {shortDesc}
+            </p>
+          )}
+        </div>
+
+        {/* Pricing & Primary CTA with accessible touch target (min-h-[44px]) */}
+        <div className="pt-3 mt-3 border-t border-stone-100 flex items-center justify-between gap-2">
+          <div className="flex flex-col">
+            <div className="flex items-baseline gap-2">
+              <span className="font-bold text-base sm:text-lg text-brand-obsidian">
+                ₹{displayPrice.toLocaleString('en-IN')}
+              </span>
+              {salePrice && basePrice > salePrice && (
+                <span className="text-xs text-stone-400 line-through">
+                  ₹{basePrice.toLocaleString('en-IN')}
+                </span>
+              )}
+            </div>
+            {discountPercent && (
+              <span className="text-[11px] font-bold text-red-600 mt-0.5">
+                {discountPercent}% OFF
+              </span>
+            )}
+          </div>
+
+          <Link
+            href={`/burqa/${product.slug}`}
+            className="min-h-[44px] px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 bg-brand-obsidian text-white hover:bg-stone-800 transition-all shadow-sm active:scale-95 group/btn"
+            title="Explore Piece"
+            aria-label={`Explore ${product.name}`}
+          >
+            <span>View Piece</span>
+            <ArrowRight className="w-3.5 h-3.5 text-brand-gold-light group-hover/btn:translate-x-0.5 transition-transform" />
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
