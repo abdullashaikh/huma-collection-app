@@ -4,6 +4,7 @@ import { Award, Compass, Heart, Instagram, MapPin, MessageCircle, Phone, Sparkle
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { LUXURY_EASE } from '../ui/Motion';
+import { BrandLogo } from '../ui/BrandLogo';
 
 const OWNER_NAME = process.env.NEXT_PUBLIC_OWNER_NAME || 'Hamid Shaikh';
 const STORE_PHONE = process.env.NEXT_PUBLIC_STORE_PHONE || '8200617009';
@@ -72,14 +73,7 @@ export function Footer() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 text-xs">
           {/* Brand & Store Contact Column */}
           <div className="space-y-4">
-            <Link href="/" className="inline-block">
-              <span className="font-serif text-xl font-bold tracking-[0.2em] text-white uppercase block">
-                Huma
-              </span>
-              <span className="text-xs tracking-wider text-brand-gold font-medium block -mt-0.5">
-                Hijab Collection
-              </span>
-            </Link>
+            <BrandLogo size="md" variant="light" />
             <p className="text-stone-400 leading-relaxed max-w-sm">
               Rooted in timeless elegance, Huma Hijab Collection creates high-grade modest wear specializing in luxury Burqas, Abayas, Hijabs, and Islamic essentials.
             </p>

@@ -8,6 +8,9 @@ export const metadata: Metadata = {
   title: 'Boutique Collection & Catalogue | Huma Hijab Collection',
   description:
     'Explore our complete catalogue of luxury burqas, breathable hijabs, artisanal non-alcoholic attars, men\'s prayer caps, and Hajj & Umrah travel essentials.',
+  alternates: {
+    canonical: 'https://humahijabcollection.com/collection',
+  },
 };
 
 async function getCollectionData(): Promise<{
@@ -40,15 +43,30 @@ async function getCollectionData(): Promise<{
 export default async function CollectionPage() {
   const { categories, products } = await getCollectionData();
 
+  const collectionSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Boutique Modest Collection | Huma Hijab Collection',
+    description:
+      'Complete catalogue of luxury burqas, designer abayas, breathable hijabs, non-alcoholic attars, and pilgrimage essentials.',
+    url: 'https://humahijabcollection.com/collection',
+  };
+
   return (
-    <Suspense
-      fallback={
-        <div className="max-w-7xl mx-auto px-4 py-20 text-center text-xs text-stone-500 font-medium">
-          Loading boutique collection...
-        </div>
-      }
-    >
-      <CollectionClient initialCategories={categories} initialProducts={products} />
-    </Suspense>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }}
+      />
+      <Suspense
+        fallback={
+          <div className="max-w-7xl mx-auto px-4 py-20 text-center text-xs text-stone-500 font-medium">
+            Loading boutique collection...
+          </div>
+        }
+      >
+        <CollectionClient initialCategories={categories} initialProducts={products} />
+      </Suspense>
+    </>
   );
 }

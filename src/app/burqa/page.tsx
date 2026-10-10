@@ -101,11 +101,23 @@ export default async function BurqaCategoryPage({ searchParams }: BurqaPageProps
     ],
   };
 
+  const jsonLdCollection = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Designer Burqa Collection | Huma Hijab Collection',
+    description: 'Explore our signature modest burqas. Luxury Korean Crepe front-open, Emirati butterfly flare, and 360-degree umbrella cuts designed with modest proportions.',
+    url: 'https://humahijabcollection.com/burqa',
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdBreadcrumb) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdCollection) }}
       />
 
       {/* Header Banner */}

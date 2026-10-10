@@ -65,5 +65,44 @@ export default async function CategoryPage({ params }: Props) {
     notFound();
   }
 
-  return <CategoryPageClient category={category} initialProducts={products} />;
+  const breadcrumbList = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://humahijabcollection.com',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: category.name,
+        item: `https://humahijabcollection.com/category/${category.slug}`,
+      },
+    ],
+  };
+
+  const collectionSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: `${category.name} | Huma Hijab Collection`,
+    description: category.description || `Shop premium ${category.name} at Huma Hijab Collection`,
+    url: `https://humahijabcollection.com/category/${category.slug}`,
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbList) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }}
+      />
+      <CategoryPageClient category={category} initialProducts={products} />
+    </>
+  );
 }

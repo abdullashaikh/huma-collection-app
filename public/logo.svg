@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 90" width="100%" height="100%">
+  <defs>
+    <linearGradient id="logoGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F3E7C4" />
+      <stop offset="35%" stop-color="#C5A880" />
+      <stop offset="70%" stop-color="#9E7D47" />
+      <stop offset="100%" stop-color="#E5D3A3" />
+    </linearGradient>
+    <radialGradient id="logoDark" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#2A2826" />
+      <stop offset="60%" stop-color="#1C1B1A" />
+      <stop offset="100%" stop-color="#100F0E" />
+    </radialGradient>
+  </defs>
+
+  <!-- Left Circular Luxury Emblem (scaled to 72x72) -->
+  <g transform="translate(9, 9) scale(0.14)">
+    <circle cx="256" cy="256" r="246" fill="url(#logoDark)" />
+    <circle cx="256" cy="256" r="240" fill="none" stroke="url(#logoGold)" stroke-width="6" />
+    <circle cx="256" cy="256" r="226" fill="none" stroke="url(#logoGold)" stroke-width="2" stroke-dasharray="6,4" />
+    
+    <!-- Arch -->
+    <path d="M 160 380 L 160 250 C 160 170, 210 120, 256 90 C 302 120, 352 170, 352 250 L 352 380 Z" 
+          fill="none" stroke="url(#logoGold)" stroke-width="4" />
+    
+    <!-- Star -->
+    <polygon points="256,66 261,78 274,82 261,86 256,98 251,86 238,82 251,78" fill="url(#logoGold)" />
+
+    <!-- Letter H -->
+    <path d="M 194 195 L 226 195 L 226 205 L 216 205 L 216 335 L 226 335 L 226 345 L 194 345 L 194 335 L 204 335 L 204 205 L 194 205 Z" fill="url(#logoGold)" />
+    <path d="M 286 195 L 318 195 L 318 205 L 308 205 L 308 335 L 318 335 L 318 345 L 286 345 L 286 335 L 296 335 L 296 205 L 286 205 Z" fill="url(#logoGold)" />
+    <path d="M 204 265 L 308 265 L 308 275 L 204 275 Z" fill="url(#logoGold)" />
+    <polygon points="256,260 264,270 256,280 248,270" fill="#FFF" />
+  </g>
+
+  <!-- Typography Wordmark -->
+  <!-- Primary Title: HUMA -->
+  <text x="96" y="47" font-family="'Playfair Display', Georgia, serif" font-size="34" font-weight="700" letter-spacing="0.22em" fill="#1C1B1A">
+    HUMA
+  </text>
+
+  <!-- Subtitle: HIJAB COLLECTION -->
+  <text x="98" y="68" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="11" font-weight="600" letter-spacing="0.26em" fill="#9E7D47">
+    HIJAB COLLECTION
+  </text>
+
+  <!-- Subtle Gold Divider -->
+  <line x1="98" y1="74" x2="280" y2="74" stroke="url(#logoGold)" stroke-width="1" stroke-opacity="0.6" />
+</svg>

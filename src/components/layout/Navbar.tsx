@@ -11,6 +11,7 @@ import { OtpModal } from '../auth/OtpModal';
 
 import { Category } from '../../types';
 import { FALLBACK_CATEGORIES } from '../../lib/fallback-data';
+import { BrandLogo } from '../ui/BrandLogo';
 
 const STORE_PHONE = process.env.NEXT_PUBLIC_STORE_PHONE || '8200617009';
 const MAPS_URL = process.env.NEXT_PUBLIC_MAPS_URL || 'https://maps.app.goo.gl/Uocg3MLVbusi17NG6';
@@ -138,14 +139,7 @@ export function Navbar() {
 
             {/* Brand Logo & Wordmark */}
             <div className="flex-1 lg:flex-initial text-center lg:text-left">
-              <Link href="/" className="inline-block group">
-                <span className="font-serif text-xl sm:text-2xl font-bold tracking-[0.2em] text-brand-obsidian uppercase block group-hover:text-brand-gold-dark transition-colors">
-                  Huma
-                </span>
-                <span className="text-xs tracking-wider text-stone-500 font-medium block -mt-0.5 group-hover:text-brand-obsidian transition-colors">
-                  Hijab Collection
-                </span>
-              </Link>
+              <BrandLogo size="md" variant="dark" />
             </div>
 
             {/* Desktop Navigation Links with Dynamic Category Dropdowns */}

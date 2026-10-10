@@ -86,11 +86,40 @@ export default async function ProductDetailPage({ params }: Props) {
     },
   };
 
+  const breadcrumbList = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://humahijabcollection.com',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Burqa Collection',
+        item: 'https://humahijabcollection.com/burqa',
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: product.name,
+        item: `https://humahijabcollection.com/burqa/${product.slug}`,
+      },
+    ],
+  };
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdProduct) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbList) }}
       />
       <ProductDetailClient product={product} />
     </>

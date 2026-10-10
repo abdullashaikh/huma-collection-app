@@ -56,8 +56,60 @@ export default async function HomePage() {
     (p) => !primaryCat || (p.categoryId !== primaryCat.id && (p as any).category_id !== primaryCat.id && p.categorySlug !== primaryCat.slug)
   );
 
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'Where is Huma Hijab Collection boutique located?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Huma Hijab Collection is located near Teen Darwaza on Relief Road in Ahmedabad, Gujarat, India. You can visit in person to experience our luxury Saudi Nida and Korean Crepe fabrics.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'What fabrics are used in your luxury burqas and abayas?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'We specialize in genuine imported Korean Crepe, Saudi Nida Matte, Dubai Georgette, and Turkish Chiffon with 100% opacity and generous modest flare.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Do you offer custom sizing and bespoke alterations?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Yes, we provide in-store bespoke tailoring and length alterations (sizes 50 through 62) to guarantee a modest fit.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Are the attars and perfumes 100% non-alcoholic?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Yes, all our artisanal concentrated attars and Arabian ouds are 100% alcohol-free and Halal-compliant.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'When does online shopping and doorstep delivery launch?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Online checkout with nationwide home delivery officially launches in November 2026. Today, customers can browse our complete digital catalogue and call or visit our boutique.',
+        },
+      },
+    ],
+  };
+
   return (
-    <div className="space-y-16 sm:space-y-24 pb-16 bg-brand-cream text-brand-dark">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+      <div className="space-y-16 sm:space-y-24 pb-16 bg-brand-cream text-brand-dark">
       {/* 1. Cinematic Hero Section with Staggered Motion */}
       <HeroSection />
 
@@ -229,5 +281,6 @@ export default async function HomePage() {
         </div>
       </SectionReveal>
     </div>
-  );
+  </>
+);
 }
