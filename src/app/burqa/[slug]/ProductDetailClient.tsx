@@ -135,11 +135,28 @@ export function ProductDetailClient({ product }: { product: ProductItem }) {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-16">
-      {/* Breadcrumbs */}
+      {/* Dynamic Breadcrumbs */}
       <nav className="flex items-center gap-1.5 text-xs text-stone-500 overflow-x-auto whitespace-nowrap">
         <Link href="/" className="hover:text-brand-obsidian">Home</Link>
         <ChevronRight className="w-3.5 h-3.5" />
-        <Link href="/burqa" className="hover:text-brand-obsidian">Burqa Collection</Link>
+        <Link href="/collection" className="hover:text-brand-obsidian">Collections</Link>
+        {product.categorySlug && (
+          <>
+            <ChevronRight className="w-3.5 h-3.5" />
+            <Link
+              href={product.categorySlug === 'burqa' ? '/burqa' : `/category/${product.categorySlug}`}
+              className="hover:text-brand-obsidian font-medium"
+            >
+              {product.categoryName || product.categorySlug}
+            </Link>
+          </>
+        )}
+        {product.subcategoryName && (
+          <>
+            <ChevronRight className="w-3.5 h-3.5" />
+            <span className="text-stone-600 font-medium">{product.subcategoryName}</span>
+          </>
+        )}
         <ChevronRight className="w-3.5 h-3.5" />
         <span className="text-brand-obsidian font-semibold truncate max-w-xs">{product.name}</span>
       </nav>
@@ -198,9 +215,21 @@ export function ProductDetailClient({ product }: { product: ProductItem }) {
         {/* Right Column: Purchasing Actions (5 cols) */}
         <div className="lg:col-span-5 space-y-6">
           <div>
-            <span className="text-xs font-bold uppercase tracking-widest text-brand-gold-dark">
-              {product.fabric || 'Pure Korean Crepe'}
-            </span>
+            <div className="flex flex-wrap items-center gap-2 mb-1.5">
+              <span className="text-xs font-bold uppercase tracking-widest text-brand-gold-dark">
+                {product.categoryName || product.fabric || 'Modest Collection'}
+              </span>
+              {product.subcategoryName && (
+                <span className="text-xs text-stone-400 font-medium">
+                  • {product.subcategoryName}
+                </span>
+              )}
+              {product.audience && (
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-brand-gold/15 text-brand-gold-dark border border-brand-gold/30">
+                  {product.audience === 'MEN' ? 'Men' : product.audience === 'ALL' ? 'Shared Essential' : 'Women'}
+                </span>
+              )}
+            </div>
             <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-brand-obsidian mt-1 leading-tight">
               {product.name}
             </h1>
@@ -370,8 +399,10 @@ export function ProductDetailClient({ product }: { product: ProductItem }) {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 pt-6 border-t border-stone-100 text-xs">
           <div className="p-4 rounded-xl bg-stone-50">
-            <span className="font-bold text-stone-500 uppercase tracking-wider block text-[10px]">Fabric Drape</span>
-            <span className="font-semibold text-brand-obsidian mt-1 block">{product.fabric || 'Pure Korean Crepe'}</span>
+            <span className="font-bold text-stone-500 uppercase tracking-wider block text-[10px]">Fabric / Material</span>
+            <span className="font-semibold text-brand-obsidian mt-1 block">
+              {product.materials || product.fabric || 'Pure Modest Textile'}
+            </span>
           </div>
           <div className="p-4 rounded-xl bg-stone-50">
             <span className="font-bold text-stone-500 uppercase tracking-wider block text-[10px]">Cut & Silhouette</span>
@@ -385,6 +416,22 @@ export function ProductDetailClient({ product }: { product: ProductItem }) {
             <span className="font-bold text-stone-500 uppercase tracking-wider block text-[10px]">Exchange Policy</span>
             <span className="font-semibold text-brand-obsidian mt-1 block">7-Day Free Size Exchange</span>
           </div>
+          {product.colors && (
+            <div className="p-4 rounded-xl bg-stone-50">
+              <span className="font-bold text-stone-500 uppercase tracking-wider block text-[10px]">Available Colors</span>
+              <span className="font-semibold text-brand-obsidian mt-1 block">
+                {Array.isArray(product.colors) ? product.colors.join(', ') : String(product.colors)}
+              </span>
+            </div>
+          )}
+          {product.tags && (
+            <div className="p-4 rounded-xl bg-stone-50">
+              <span className="font-bold text-stone-500 uppercase tracking-wider block text-[10px]">Tags</span>
+              <span className="font-semibold text-brand-obsidian mt-1 block">
+                {Array.isArray(product.tags) ? product.tags.join(', ') : String(product.tags)}
+              </span>
+            </div>
+          )}
         </div>
       </div>
 

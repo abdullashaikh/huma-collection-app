@@ -45,12 +45,15 @@ async function getHomeData(): Promise<{
 export default async function HomePage() {
   const { products, categories } = await getHomeData();
 
-  const burqaProducts = products.filter(
-    (p) => (p as any).category_slug === 'burqa' || p.categorySlug === 'burqa' || (p as any).category_id === 1 || p.categoryId === 1
+  // Primary category (Burqa or first published category)
+  const primaryCat = categories.find((c) => c.slug === 'burqa') || categories[0];
+
+  const primaryProducts = products.filter(
+    (p) => primaryCat && (p.categoryId === primaryCat.id || (p as any).category_id === primaryCat.id || p.categorySlug === primaryCat.slug)
   );
 
   const otherProducts = products.filter(
-    (p) => (p as any).category_slug !== 'burqa' && p.categorySlug !== 'burqa' && (p as any).category_id !== 1 && p.categoryId !== 1
+    (p) => !primaryCat || (p.categoryId !== primaryCat.id && (p as any).category_id !== primaryCat.id && p.categorySlug !== primaryCat.slug)
   );
 
   return (
@@ -67,7 +70,7 @@ export default async function HomePage() {
       {/* 4. Curated Category Showcase (Architectural Arches & Motion) */}
       <CategoryShowcase categories={categories} />
 
-      {/* 5. PRIMARY BURQA SHOWCASE */}
+      {/* 5. PRIMARY FLAGSHIP SHOWCASE */}
       <SectionReveal id="collection" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-gradient-to-b from-brand-ivory via-white to-brand-ivory rounded-3xl p-6 sm:p-10 border border-brand-gold/30 shadow-luxury">
           <FadeUp className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
@@ -77,15 +80,16 @@ export default async function HomePage() {
                 <span>Primary Specialization</span>
               </div>
               <h2 className="font-serif text-2xl sm:text-4xl font-bold text-brand-obsidian">
-                Signature Burqa Masterpieces
+                {primaryCat ? `Signature ${primaryCat.name} Masterpieces` : 'Signature Modest Masterpieces'}
               </h2>
               <p className="text-xs sm:text-sm text-stone-600 mt-1 max-w-xl">
-                Front-open, butterfly flare, and 360-degree umbrella cuts. Tailored with authentic Korean Crepe and Saudi Nida fabrics.
+                {primaryCat?.description ||
+                  'Front-open, butterfly flare, and 360-degree umbrella cuts. Tailored with authentic Korean Crepe and Saudi Nida fabrics.'}
               </p>
             </div>
 
             <Link
-              href="/burqa"
+              href={primaryCat?.slug === 'burqa' ? '/burqa' : `/category/${primaryCat?.slug || 'burqa'}`}
               className="inline-flex items-center gap-2.5 text-xs font-bold text-brand-obsidian hover:text-brand-gold-dark tracking-wide uppercase group flex-shrink-0 min-h-[44px] px-4 py-2.5 rounded-xl border border-stone-200 bg-white hover:border-brand-gold/60 shadow-sm transition-all active:scale-95"
             >
               <span>View Complete Catalog</span>
@@ -97,8 +101,8 @@ export default async function HomePage() {
 
           {/* Staggered Product Grid */}
           <StaggerContainer className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-            {burqaProducts.length > 0 ? (
-              burqaProducts.map((product) => (
+            {primaryProducts.length > 0 ? (
+              primaryProducts.map((product) => (
                 <StaggerItem key={product.id}>
                   <ProductCard product={product} />
                 </StaggerItem>
@@ -117,21 +121,21 @@ export default async function HomePage() {
       {/* 5. Editorial Craftsmanship Section */}
       <BrandCraftsmanshipSection />
 
-      {/* 6. Trending Modest Essentials (Hijabs, Attars, Janamaz) */}
+      {/* 6. Trending Modest Essentials & Men's Islamic Wear */}
       {otherProducts.length > 0 && (
         <SectionReveal className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeUp className="flex items-center justify-between mb-8">
             <div>
-              <span className="text-xs font-bold uppercase tracking-widest text-brand-gold-dark">Modest Essentials</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-brand-gold-dark">Curated Essentials</span>
               <h2 className="font-serif text-2xl sm:text-3xl font-bold text-brand-obsidian mt-0.5">
-                Hijabs, Artisanal Attars &amp; Janamaz
+                Hijabs, Artisanal Attars, Men&apos;s Topis &amp; Sunnah Essentials
               </h2>
             </div>
             <Link
-              href="/category/hijab"
+              href="/collection"
               className="inline-flex items-center gap-2.5 text-xs font-bold text-brand-obsidian hover:text-brand-gold-dark tracking-wide uppercase group flex-shrink-0 min-h-[44px] px-4 py-2.5 rounded-xl border border-stone-200 bg-white hover:border-brand-gold/60 shadow-sm transition-all active:scale-95"
             >
-              <span>Explore All Essentials</span>
+              <span>Explore All Collections</span>
               <span className="w-7 h-7 rounded-full bg-brand-sand flex items-center justify-center text-brand-obsidian group-hover:bg-brand-gold group-hover:text-white transition-all">
                 <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
               </span>

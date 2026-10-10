@@ -56,6 +56,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
+import { CategoryPageClient } from './CategoryPageClient';
+
 export default async function CategoryPage({ params }: Props) {
   const { category, products } = await getCategoryData(params.slug);
 
@@ -63,38 +65,5 @@ export default async function CategoryPage({ params }: Props) {
     notFound();
   }
 
-  return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-10">
-      {/* Category Header with FadeUp */}
-      <FadeUp className="text-center max-w-2xl mx-auto space-y-2">
-        <span className="text-xs font-bold uppercase tracking-widest text-brand-gold-dark">Huma Modest</span>
-        <h1 className="font-serif text-3xl sm:text-5xl font-bold text-brand-obsidian">{category.name}</h1>
-        {category.description && (
-          <p className="text-xs sm:text-sm text-stone-600 leading-relaxed mt-2">{category.description}</p>
-        )}
-      </FadeUp>
-
-      {/* Grid with StaggerContainer */}
-      {products.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-3xl border border-stone-200 p-8">
-          <p className="text-sm font-semibold text-brand-obsidian">Fresh pieces arriving soon for {category.name}.</p>
-          <p className="text-xs text-stone-500 mt-1">Explore our signature Burqa collection in the meantime.</p>
-          <Link
-            href="/burqa"
-            className="mt-4 inline-block px-5 py-2.5 rounded-xl bg-brand-obsidian text-white text-xs font-semibold"
-          >
-            Explore Burqa Collection
-          </Link>
-        </div>
-      ) : (
-        <StaggerContainer className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-          {products.map((product) => (
-            <StaggerItem key={product.id}>
-              <ProductCard product={product} />
-            </StaggerItem>
-          ))}
-        </StaggerContainer>
-      )}
-    </div>
-  );
+  return <CategoryPageClient category={category} initialProducts={products} />;
 }

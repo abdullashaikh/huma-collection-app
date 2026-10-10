@@ -13,82 +13,37 @@ interface CategoryShowcaseProps {
   categories: Category[];
 }
 
-const CATEGORY_META: Record<string, { image: string; tag: string; subtitle: string }> = {
-  burqa: {
-    image: 'https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?auto=format&fit=crop&w=800&q=80',
-    tag: 'Flagship Collection',
-    subtitle: 'Saudi Nida & Korean Crepe',
-  },
-  hijab: {
-    image: 'https://images.unsplash.com/photo-1574634534894-89d7576c8259?auto=format&fit=crop&w=800&q=80',
-    tag: 'Everyday Luxury',
-    subtitle: 'Turkish Silk & Modal Chiffon',
-  },
-  abaya: {
-    image: 'https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?auto=format&fit=crop&w=800&q=80',
-    tag: 'Contemporary Cut',
-    subtitle: 'Minimalist Dubai Silhouettes',
-  },
-  niqab: {
-    image: 'https://images.unsplash.com/photo-1609357605129-26f69add5d6e?auto=format&fit=crop&w=800&q=80',
-    tag: 'Pure Comfort',
-    subtitle: 'Breathable Saudi Multi-Layer',
-  },
-  nospice: {
-    image: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=800&q=80',
-    tag: 'Modest Essential',
-    subtitle: 'Skin-Friendly Soft Cotton',
-  },
-  'perfume-attar': {
-    image: 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=800&q=80',
-    tag: 'Non-Alcoholic',
-    subtitle: 'Pure Dehn Al Oud & Musk Oils',
-  },
-  janamaz: {
-    image: 'https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&w=800&q=80',
-    tag: 'Sacred Comfort',
-    subtitle: 'Orthopedic Padded Velvet Mats',
-  },
-  topi: {
-    image: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=800&q=80',
-    tag: 'Handcrafted',
-    subtitle: 'Embroidered Prayer Caps',
-  },
-  'hajj-umrah': {
-    image: 'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=800&q=80',
-    tag: 'Pilgrimage Kit',
-    subtitle: '100% Terry Cotton Ihram Sets',
-  },
-  tasbih: {
-    image: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=800&q=80',
-    tag: 'Artisanal Beads',
-    subtitle: 'Olive Wood & Agate Counters',
-  },
-  miswak: {
-    image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=800&q=80',
-    tag: 'Sunnah Care',
-    subtitle: 'Vacuum-Sealed Fresh Olive Root',
-  },
-  rumal: {
-    image: 'https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?auto=format&fit=crop&w=800&q=80',
-    tag: 'Classic Weave',
-    subtitle: 'Pure Cotton Embroidered Rumal',
-  },
+const DEFAULT_CATEGORY_IMAGES: Record<string, string> = {
+  burqa: 'https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?auto=format&fit=crop&w=800&q=80',
+  hijab: 'https://images.unsplash.com/photo-1574634534894-89d7576c8259?auto=format&fit=crop&w=800&q=80',
+  abaya: 'https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?auto=format&fit=crop&w=800&q=80',
+  niqab: 'https://images.unsplash.com/photo-1609357605129-26f69add5d6e?auto=format&fit=crop&w=800&q=80',
+  nospice: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=800&q=80',
+  'perfume-attar': 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=800&q=80',
+  janamaz: 'https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&w=800&q=80',
+  topi: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=800&q=80',
+  'hajj-umrah': 'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=800&q=80',
+  tasbih: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=800&q=80',
+  miswak: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=800&q=80',
+  rumal: 'https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?auto=format&fit=crop&w=800&q=80',
 };
 
 export const CategoryShowcase: React.FC<CategoryShowcaseProps> = ({ categories }) => {
   const [hoveredSlug, setHoveredSlug] = useState<string | null>(null);
+  const [selectedAudience, setSelectedAudience] = useState<'ALL' | 'WOMEN' | 'MEN' | 'COMMON'>('ALL');
 
-  // Take top 6 prioritized categories or all available
-  const fallbackCategories: Partial<Category>[] = [
-    { id: 1, name: 'Burqa Collection', slug: 'burqa', productCount: 18, imageUrl: null },
-    { id: 2, name: 'Luxury Hijabs', slug: 'hijab', productCount: 12, imageUrl: null },
-    { id: 3, name: 'Designer Abayas', slug: 'abaya', productCount: 15, imageUrl: null },
-    { id: 4, name: 'Saudi Niqabs', slug: 'niqab', productCount: 8, imageUrl: null },
-    { id: 5, name: 'Artisanal Attar', slug: 'perfume-attar', productCount: 9, imageUrl: null },
-    { id: 6, name: 'Padded Janamaz', slug: 'janamaz', productCount: 6, imageUrl: null },
-  ];
-  const displayCategories: (Category | Partial<Category>)[] = categories.length > 0 ? categories.slice(0, 6) : fallbackCategories;
+  // Filter root categories dynamically
+  const rootCategories = categories.filter((c) => !c.parentId);
+
+  const filteredCategories = rootCategories.filter((c) => {
+    if (selectedAudience === 'ALL') return true;
+    if (selectedAudience === 'WOMEN') return c.audience === 'WOMEN' || c.audience === 'ALL';
+    if (selectedAudience === 'MEN') return c.audience === 'MEN' || c.audience === 'ALL';
+    if (selectedAudience === 'COMMON') return c.audience === 'ALL';
+    return true;
+  });
+
+  const displayCategories = filteredCategories.length > 0 ? filteredCategories : rootCategories;
 
   return (
     <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -96,7 +51,7 @@ export const CategoryShowcase: React.FC<CategoryShowcaseProps> = ({ categories }
       <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-[800px] h-[350px] bg-gradient-to-b from-brand-gold/10 via-brand-sand/20 to-transparent blur-3xl pointer-events-none -z-10" />
 
       {/* Section Header with smooth entrance */}
-      <FadeUp className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+      <FadeUp className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-gold/10 border border-brand-gold/30 text-brand-gold-dark text-xs font-bold tracking-widest uppercase mb-2">
             <Sparkles className="w-3.5 h-3.5 text-brand-gold" />
@@ -111,7 +66,7 @@ export const CategoryShowcase: React.FC<CategoryShowcaseProps> = ({ categories }
         </div>
 
         <Link
-          href="/burqa"
+          href="/collection"
           className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-brand-obsidian hover:text-brand-gold-dark tracking-wide uppercase group self-start md:self-end md:mb-1"
         >
           <span>View All Collections</span>
@@ -121,18 +76,48 @@ export const CategoryShowcase: React.FC<CategoryShowcaseProps> = ({ categories }
         </Link>
       </FadeUp>
 
+      {/* Audience Filter Pills */}
+      <div className="flex items-center gap-2 pb-6 overflow-x-auto scrollbar-none">
+        {[
+          { key: 'ALL', label: 'All Collections' },
+          { key: 'WOMEN', label: '👑 Women\'s Modest' },
+          { key: 'MEN', label: '🕌 Men\'s Wear' },
+          { key: 'COMMON', label: '✨ Shared Essentials' },
+        ].map((tab) => {
+          const isSelected = selectedAudience === tab.key;
+          return (
+            <button
+              key={tab.key}
+              onClick={() => setSelectedAudience(tab.key as any)}
+              className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all shadow-sm ${
+                isSelected
+                  ? 'bg-brand-obsidian text-brand-gold shadow-md scale-105'
+                  : 'bg-white text-stone-600 hover:text-brand-obsidian hover:bg-stone-50 border border-stone-200'
+              }`}
+            >
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
+
       {/* Luxury Arched Categories Grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-5">
         {displayCategories.map((cat, index) => {
           const slug = cat.slug || 'burqa';
-          const meta = CATEGORY_META[slug] || {
-            image: cat.imageUrl || (cat as any).image_url || 'https://images.unsplash.com/photo-1584282479901-705a6104bc99?auto=format&fit=crop&w=800&q=80',
-            tag: 'Exclusive',
-            subtitle: 'Premium Modest Wear',
-          };
+          const cardImg =
+            cat.imageUrl ||
+            (cat as any).image_url ||
+            DEFAULT_CATEGORY_IMAGES[slug] ||
+            'https://images.unsplash.com/photo-1584282479901-705a6104bc99?auto=format&fit=crop&w=800&q=80';
 
-          const cardImg = cat.imageUrl || (cat as any).image_url || meta.image;
-          const pieceCount = cat.productCount || (cat as any).product_count || 12;
+          const pieceCount = cat.productCount ?? (cat as any).product_count ?? 0;
+          const audienceTag =
+            cat.audience === 'MEN'
+              ? 'Men\'s Wear'
+              : cat.audience === 'ALL'
+              ? 'Shared Essential'
+              : 'Women\'s Modest';
 
           return (
             <motion.div
@@ -167,7 +152,7 @@ export const CategoryShowcase: React.FC<CategoryShowcaseProps> = ({ categories }
                   {/* Top Floating Badge (High contrast semi-opaque dark pill to guarantee legibility) */}
                   <div className="absolute top-3.5 inset-x-3 flex items-center justify-between z-10">
                     <span className="px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/20 text-xs font-semibold tracking-wider uppercase text-white shadow-sm">
-                      {meta.tag}
+                      {audienceTag}
                     </span>
                     <span className="w-6 h-6 rounded-full bg-brand-gold/90 text-brand-dark flex items-center justify-center opacity-0 group-hover:opacity-100 -translate-y-2 group-hover:translate-y-0 transition-all duration-300 shadow-md">
                       <ArrowUpRight className="w-3.5 h-3.5 stroke-[2.5]" />
@@ -183,7 +168,7 @@ export const CategoryShowcase: React.FC<CategoryShowcaseProps> = ({ categories }
                       {cat.name}
                     </h3>
                     <p className="text-xs text-stone-200 line-clamp-1 mt-1 font-light">
-                      {meta.subtitle}
+                      {cat.description || 'Premium Modest Wear'}
                     </p>
 
                     {/* Animated Gold Divider on Hover */}

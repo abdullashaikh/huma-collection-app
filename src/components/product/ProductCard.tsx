@@ -122,10 +122,12 @@ export function ProductCard({ product }: ProductCardProps) {
     return list.slice(0, 4);
   }, [product.variants]);
 
+  const productHref = `/product/${product.slug}`;
+
   return (
     <div className="group relative flex flex-col bg-white rounded-2xl overflow-hidden border border-stone-200/80 shadow-luxury hover:shadow-luxury-hover hover:-translate-y-1 transition-all duration-500">
       {/* Media Container (3:4 aspect ratio) */}
-      <Link href={`/burqa/${product.slug}`} className="relative aspect-[3/4] w-full overflow-hidden bg-stone-100 block">
+      <Link href={productHref} className="relative aspect-[3/4] w-full overflow-hidden bg-stone-100 block">
         {/* Interactive Multi-View & 360 Product Image Viewer */}
         <InteractiveProductViewer
           images={viewerImages}
@@ -196,13 +198,20 @@ export function ProductCard({ product }: ProductCardProps) {
       {/* Information Container */}
       <div className="p-4 flex flex-col flex-1 justify-between">
         <div>
-          {/* Category / Fabric label */}
-          <span className="text-xs font-semibold text-brand-gold-dark tracking-wide block">
-            {product.categoryName || (product.fabric && product.fabric !== 'N/A' ? product.fabric : 'Modest Essential')}
-          </span>
+          {/* Category / Fabric label + Audience Badge */}
+          <div className="flex items-center justify-between gap-1">
+            <span className="text-xs font-semibold text-brand-gold-dark tracking-wide truncate">
+              {product.categoryName || (product.fabric && product.fabric !== 'N/A' ? product.fabric : 'Modest Essential')}
+            </span>
+            {product.audience && (
+              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-brand-sand text-stone-700 border border-stone-200 uppercase flex-shrink-0">
+                {product.audience === 'MEN' ? 'Men' : product.audience === 'ALL' ? 'Shared' : 'Women'}
+              </span>
+            )}
+          </div>
 
           {/* Product Title */}
-          <Link href={`/burqa/${product.slug}`} className="block mt-1">
+          <Link href={productHref} className="block mt-1">
             <h3 className="font-serif text-base font-semibold text-brand-obsidian line-clamp-1 group-hover:text-brand-gold-dark transition-colors">
               {product.name}
             </h3>
@@ -237,7 +246,7 @@ export function ProductCard({ product }: ProductCardProps) {
           </div>
 
           <Link
-            href={`/burqa/${product.slug}`}
+            href={productHref}
             className="min-h-[44px] px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 bg-brand-obsidian text-white hover:bg-stone-800 transition-all shadow-sm active:scale-95 group/btn"
             title="Explore Piece"
             aria-label={`Explore ${product.name}`}
