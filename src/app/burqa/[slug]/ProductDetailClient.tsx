@@ -47,7 +47,19 @@ export function ProductDetailClient({ product }: { product: ProductItem }) {
   const [copiedLink, setCopiedLink] = useState(false);
 
   const images = product.images && product.images.length > 0 ? product.images : [
-    { id: 1, productId: product.id, s3Key: '', s3Url: 'https://images.unsplash.com/photo-1584282479901-705a6104bc99?auto=format&fit=crop&w=1200&q=85', altText: product.name, sortOrder: 1, isPrimary: true }
+    {
+      id: 1,
+      productId: product.id,
+      s3Key: '',
+      s3Url:
+        (product as any).primaryImageUrl ||
+        (product as any).primary_image_url ||
+        'https://images.unsplash.com/photo-1584282479901-705a6104bc99?auto=format&fit=crop&w=1200&q=85',
+      altText: product.name,
+      sortOrder: 1,
+      isPrimary: true,
+      viewType: 'Front View',
+    },
   ];
 
   // Prepare views for interactive 360 / multi-view exploration
@@ -63,7 +75,7 @@ export function ProductDetailClient({ product }: { product: ProductItem }) {
       if (product.views.detail) viewsList.push({ url: product.views.detail, label: 'Fabric Detail' });
       if (viewsList.length > 0) return viewsList;
     }
-    return images.map((img, idx) => ({
+    return images.map((img: any, idx: number) => ({
       url: img.s3Url,
       alt: img.altText || `${product.name} view ${idx + 1}`,
       label: img.viewType || (idx === 0 ? 'Front View' : idx === 1 ? 'Back View' : `View ${idx + 1}`),

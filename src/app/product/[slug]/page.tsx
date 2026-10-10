@@ -34,6 +34,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const primaryImage =
     product.images?.find((img) => img.isPrimary)?.s3Url ||
+    product.images?.[0]?.s3Url ||
+    (product as any).primaryImageUrl ||
+    (product as any).primary_image_url ||
     'https://images.unsplash.com/photo-1584282479901-705a6104bc99?auto=format&fit=crop&w=1200&q=85';
 
   return {
@@ -61,6 +64,9 @@ export default async function ProductDetailPage({ params }: Props) {
 
   const primaryImage =
     product.images?.find((img) => img.isPrimary)?.s3Url ||
+    product.images?.[0]?.s3Url ||
+    (product as any).primaryImageUrl ||
+    (product as any).primary_image_url ||
     'https://images.unsplash.com/photo-1584282479901-705a6104bc99?auto=format&fit=crop&w=1200&q=85';
 
   const jsonLdProduct = {

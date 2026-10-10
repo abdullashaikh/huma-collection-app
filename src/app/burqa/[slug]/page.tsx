@@ -32,7 +32,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: 'Product Not Found | Huma Hijab Collection' };
   }
 
-  const primaryImage = product.images?.find((img) => img.isPrimary)?.s3Url || 'https://images.unsplash.com/photo-1584282479901-705a6104bc99?auto=format&fit=crop&w=1200&q=85';
+  const primaryImage =
+    product.images?.find((img) => img.isPrimary)?.s3Url ||
+    product.images?.[0]?.s3Url ||
+    (product as any).primaryImageUrl ||
+    (product as any).primary_image_url ||
+    'https://images.unsplash.com/photo-1584282479901-705a6104bc99?auto=format&fit=crop&w=1200&q=85';
 
   return {
     title: product.seoTitle || `${product.name} | Huma Hijab Collection`,
@@ -57,7 +62,12 @@ export default async function ProductDetailPage({ params }: Props) {
     notFound();
   }
 
-  const primaryImage = product.images?.find((img) => img.isPrimary)?.s3Url || 'https://images.unsplash.com/photo-1584282479901-705a6104bc99?auto=format&fit=crop&w=1200&q=85';
+  const primaryImage =
+    product.images?.find((img) => img.isPrimary)?.s3Url ||
+    product.images?.[0]?.s3Url ||
+    (product as any).primaryImageUrl ||
+    (product as any).primary_image_url ||
+    'https://images.unsplash.com/photo-1584282479901-705a6104bc99?auto=format&fit=crop&w=1200&q=85';
 
   const jsonLdProduct = {
     '@context': 'https://schema.org',

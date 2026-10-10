@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { ArrowUpRight, Sparkles, ChevronRight } from 'lucide-react';
 import { Category } from '../../types';
+import { getMediaUrl } from '../../lib/media';
 
 import { AnimatedCounter, FadeUp, LUXURY_EASE } from '../ui/Motion';
 
@@ -105,11 +106,12 @@ export const CategoryShowcase: React.FC<CategoryShowcaseProps> = ({ categories }
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-5">
         {displayCategories.map((cat, index) => {
           const slug = cat.slug || 'burqa';
-          const cardImg =
+          const rawImg =
             cat.imageUrl ||
             (cat as any).image_url ||
             DEFAULT_CATEGORY_IMAGES[slug] ||
             'https://images.unsplash.com/photo-1584282479901-705a6104bc99?auto=format&fit=crop&w=800&q=80';
+          const cardImg = getMediaUrl(rawImg);
 
           const pieceCount = cat.productCount ?? (cat as any).product_count ?? 0;
           const audienceTag =

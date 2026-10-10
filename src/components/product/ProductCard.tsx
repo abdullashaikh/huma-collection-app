@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { useCart } from '../../lib/cart-context';
 import { Product } from '../../types';
 import { InteractiveProductViewer } from './InteractiveProductViewer';
+import { getMediaUrl } from '../../lib/media';
 
 interface ProductCardProps {
   product: Product;
@@ -20,15 +21,21 @@ export function ProductCard({ product }: ProductCardProps) {
   const [isAddedRecently, setIsAddedRecently] = useState(false);
   const [isWishlisted, setIsWishlisted] = useState(false);
 
-  const primaryImage =
+  const rawPrimary =
     product.primary_image_url ||
+    (product as any).primaryImageUrl ||
     product.images?.find((img) => img.isPrimary)?.s3Url ||
+    product.images?.[0]?.s3Url ||
     'https://images.unsplash.com/photo-1584282479901-705a6104bc99?auto=format&fit=crop&w=800&q=80';
+  const primaryImage = getMediaUrl(rawPrimary);
 
-  const secondaryImage =
+  const rawSecondary =
     product.secondary_image_url ||
+    (product as any).secondaryImageUrl ||
     product.images?.find((img) => !img.isPrimary)?.s3Url ||
-    primaryImage;
+    product.images?.[1]?.s3Url ||
+    rawPrimary;
+  const secondaryImage = getMediaUrl(rawSecondary);
 
   // Collect all available views for the interactive viewer
   const viewerImages = React.useMemo(() => {
