@@ -150,8 +150,8 @@ export const CategoryShowcase: React.FC<CategoryShowcaseProps> = ({ categories }
                   <div className="absolute inset-0 bg-gradient-to-t from-brand-obsidian via-brand-obsidian/40 to-transparent opacity-85 group-hover:opacity-90 transition-opacity duration-300" />
 
                   {/* Top Floating Badge (High contrast semi-opaque dark pill to guarantee legibility) */}
-                  <div className="absolute top-3.5 inset-x-3 flex items-center justify-between z-10">
-                    <span className="px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/20 text-xs font-semibold tracking-wider uppercase text-white shadow-sm">
+                  <div className="absolute top-3 inset-x-2.5 sm:top-3.5 sm:inset-x-3 flex items-center justify-between z-10">
+                    <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/20 text-[10px] sm:text-xs font-semibold tracking-wider uppercase text-white shadow-sm">
                       {audienceTag}
                     </span>
                     <span className="w-6 h-6 rounded-full bg-brand-gold/90 text-brand-dark flex items-center justify-center opacity-0 group-hover:opacity-100 -translate-y-2 group-hover:translate-y-0 transition-all duration-300 shadow-md">
@@ -160,8 +160,8 @@ export const CategoryShowcase: React.FC<CategoryShowcaseProps> = ({ categories }
                   </div>
 
                   {/* Bottom Content Card (Comfortable vertical breathing room & padding) */}
-                  <div className="absolute inset-x-0 bottom-0 p-5 pb-6 text-white z-10 transform transition-transform duration-300">
-                    <span className="text-xs text-brand-gold font-medium tracking-wide uppercase block mb-1.5">
+                  <div className="absolute inset-x-0 bottom-0 p-3.5 sm:p-5 pb-4 sm:pb-6 text-white z-10 transform transition-transform duration-300">
+                    <span className="text-[11px] sm:text-xs text-brand-gold font-medium tracking-wide uppercase block mb-1">
                       {Number(pieceCount) > 0 ? (
                         <AnimatedCounter target={Number(pieceCount)} suffix="+ Designs" />
                       ) : (

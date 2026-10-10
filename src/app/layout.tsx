@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Plus_Jakarta_Sans, Playfair_Display } from 'next/font/google';
 import Script from 'next/script';
 import { CartDrawer } from '../components/cart/CartDrawer';
@@ -8,6 +8,14 @@ import { MobileBottomNav } from '../components/layout/MobileBottomNav';
 import { Navbar } from '../components/layout/Navbar';
 import { CartProvider } from '../lib/cart-context';
 import './globals.css';
+
+export const viewport: Viewport = {
+  themeColor: '#1C1B1A',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: 'cover',
+};
 
 const sansFont = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -210,7 +218,7 @@ export default function RootLayout({
         <CartProvider>
           <Navbar />
           <CartDrawer />
-          <main className="flex-1">{children}</main>
+          <main className="flex-1 pb-20 lg:pb-0">{children}</main>
           <Footer />
           <FloatingWhatsApp />
           <MobileBottomNav />

@@ -93,10 +93,10 @@ export function CategoryPageClient({ category, initialProducts }: CategoryPageCl
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2 border-b border-stone-200/80 pb-4">
         {/* Subcategories (if available) */}
         {subcategories.length > 0 ? (
-          <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto scrollbar-none pb-1 sm:pb-0">
+          <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto scrollbar-none pb-1 sm:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0">
             <button
               onClick={() => setSelectedSubcatId(null)}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all min-h-[38px] ${
                 selectedSubcatId === null
                   ? 'bg-brand-obsidian text-brand-gold shadow-sm'
                   : 'bg-white text-stone-600 hover:bg-stone-50 border border-stone-200'
@@ -110,7 +110,7 @@ export function CategoryPageClient({ category, initialProducts }: CategoryPageCl
                 <button
                   key={sub.id}
                   onClick={() => setSelectedSubcatId(sub.id)}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all min-h-[38px] ${
                     isSelected
                       ? 'bg-brand-obsidian text-brand-gold shadow-sm'
                       : 'bg-white text-stone-600 hover:bg-stone-50 border border-stone-200'
@@ -127,14 +127,14 @@ export function CategoryPageClient({ category, initialProducts }: CategoryPageCl
           </div>
         )}
 
-        {/* Sort Filter */}
+        {/* Sort Filter with safe font size for iOS */}
         <div className="flex items-center gap-2 self-end sm:self-auto">
           <label htmlFor="cat-sort" className="text-xs text-stone-500 whitespace-nowrap">Sort:</label>
           <select
             id="cat-sort"
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as any)}
-            className="text-xs rounded-xl border border-stone-200 bg-white px-3 py-1.5 text-stone-800 focus:outline-none focus:border-brand-gold"
+            className="text-base sm:text-xs rounded-xl border border-stone-200 bg-white px-3 py-2 sm:py-1.5 text-stone-800 focus:outline-none focus:border-brand-gold min-h-[40px]"
           >
             <option value="featured">Featured First</option>
             <option value="price-asc">Price: Low to High</option>

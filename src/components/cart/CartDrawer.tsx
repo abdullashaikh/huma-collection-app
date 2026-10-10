@@ -3,10 +3,22 @@
 import { MapPin, MessageCircle, Minus, Phone, Plus, ShoppingBag, Sparkles, Store, Trash2, X } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import React, { useEffect } from 'react';
 import { useCart } from '../../lib/cart-context';
 
 export function CartDrawer() {
   const { cart, isDrawerOpen, closeDrawer, updateQuantity, removeItem, isLoading } = useCart();
+
+  useEffect(() => {
+    if (isDrawerOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isDrawerOpen]);
 
   if (!isDrawerOpen) return null;
 
@@ -32,7 +44,7 @@ export function CartDrawer() {
       />
 
       {/* Drawer Panel */}
-      <div className="absolute inset-y-0 right-0 max-w-full flex pl-10">
+      <div className="absolute inset-y-0 right-0 max-w-full flex pl-0 sm:pl-10">
         <div className="w-screen max-w-md bg-brand-cream border-l border-stone-200 shadow-2xl flex flex-col">
           {/* Header */}
           <div className="px-6 py-5 border-b border-stone-200 flex items-center justify-between bg-white">
@@ -174,7 +186,7 @@ export function CartDrawer() {
 
           {/* Footer Summary & Direct Store Contact Actions */}
           {items.length > 0 && (
-            <div className="p-6 bg-white border-t border-stone-200 space-y-4">
+            <div className="p-4 sm:p-6 pb-[calc(1.25rem+env(safe-area-inset-bottom,0px))] bg-white border-t border-stone-200 space-y-4">
               <div className="space-y-1.5 text-xs">
                 <div className="flex justify-between text-stone-600">
                   <span>Selected Pieces</span>

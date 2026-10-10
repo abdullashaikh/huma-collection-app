@@ -23,6 +23,31 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Touch manipulation optimization - removes 300ms mobile tap delay */
+a, button, input, select, textarea {
+  touch-action: manipulation;
+}
+
+/* iOS Safe Area Inset Utilities */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+.mb-safe {
+  margin-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Hide scrollbars for touch carousels while preserving scrollability */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 h1, h2, h3, h4, .font-serif {
   letter-spacing: -0.015em;
   font-feature-settings: 'liga', 'clig';

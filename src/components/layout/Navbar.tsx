@@ -47,6 +47,23 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Lock background scroll when mobile drawer is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMobileMenuOpen]);
+
+  // Auto-close mobile drawer on route transition
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
+
   useEffect(() => {
     const storedUser = localStorage.getItem('huma_customer_user');
     if (storedUser) {
@@ -91,7 +108,7 @@ export function Navbar() {
   return (
     <>
       {/* 1. Announcement Bar */}
-      <div className="bg-brand-obsidian text-brand-gold-light py-2 px-4 text-center text-xs font-medium tracking-wide border-b border-brand-gold/20 flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+      <div className="bg-brand-obsidian text-brand-gold-light py-2 px-3 sm:px-4 text-center text-[11px] sm:text-xs font-medium tracking-wide border-b border-brand-gold/20 flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
         <span>
           🏛️ <strong>Physical Store Showcase:</strong> Online Shopping Launches{' '}
           <strong className="text-white underline decoration-brand-gold">{LAUNCH_DATE}</strong>
@@ -126,11 +143,11 @@ export function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
-            {/* Mobile Menu Trigger */}
+            {/* Mobile Menu Trigger with accessible 44px touch target */}
             <div className="flex items-center lg:hidden">
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="p-2 rounded-lg text-stone-700 hover:bg-stone-100 transition-colors"
+                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-stone-700 hover:bg-stone-100 transition-colors"
                 aria-label="Toggle Navigation Menu"
               >
                 {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -610,7 +627,7 @@ export function Navbar() {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="overflow-hidden lg:hidden border-t border-stone-200 bg-brand-cream max-h-[80vh] overflow-y-auto"
+              className="overflow-hidden lg:hidden border-t border-stone-200 bg-brand-cream max-h-[calc(100vh-5rem)] overflow-y-auto overscroll-contain pb-[calc(2.5rem+env(safe-area-inset-bottom,0px))]"
             >
               <div className="px-4 pt-3 pb-6 space-y-4">
                 {/* Fast Primary Links */}

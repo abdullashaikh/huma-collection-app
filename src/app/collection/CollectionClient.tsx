@@ -168,8 +168,8 @@ export function CollectionClient({ initialCategories, initialProducts }: Collect
         </p>
       </FadeUp>
 
-      {/* Audience Scope Tabs */}
-      <div className="flex items-center justify-center gap-2 overflow-x-auto scrollbar-none pb-2">
+      {/* Audience Scope Tabs (Smooth Edge-to-Edge Touch Scroll on Mobile) */}
+      <div className="flex items-center justify-start sm:justify-center gap-2 overflow-x-auto scrollbar-none pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
         {[
           { key: 'ALL', label: 'All Collections' },
           { key: 'WOMEN', label: '👑 Women\'s Modest Wear' },
@@ -185,7 +185,7 @@ export function CollectionClient({ initialCategories, initialProducts }: Collect
                 setSelectedCategorySlug('');
                 setSelectedSubcatId(null);
               }}
-              className={`px-4 py-2.5 rounded-full text-xs font-bold whitespace-nowrap transition-all shadow-sm ${
+              className={`px-4 py-2.5 rounded-full text-xs font-bold whitespace-nowrap transition-all shadow-sm min-h-[40px] ${
                 isSelected
                   ? 'bg-brand-obsidian text-brand-gold shadow-md scale-105'
                   : 'bg-white text-stone-700 hover:text-brand-obsidian hover:bg-stone-50 border border-stone-200'
@@ -200,7 +200,7 @@ export function CollectionClient({ initialCategories, initialProducts }: Collect
       {/* Search Bar & Sort Bar */}
       <div className="bg-white rounded-2xl border border-stone-200 p-4 shadow-sm space-y-4">
         <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
-          {/* Search Input */}
+          {/* Search Input with 16px font on mobile to prevent iOS auto-zoom */}
           <div className="relative w-full sm:max-w-md">
             <Search className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
@@ -208,19 +208,19 @@ export function CollectionClient({ initialCategories, initialProducts }: Collect
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by name, fabric, style, or SKU..."
-              className="w-full pl-9 pr-8 py-2 rounded-xl border border-stone-200 text-xs text-stone-800 focus:outline-none focus:border-brand-gold bg-stone-50/50"
+              className="w-full pl-9 pr-8 py-2.5 sm:py-2 rounded-xl border border-stone-200 text-base sm:text-xs text-stone-800 focus:outline-none focus:border-brand-gold bg-stone-50/50 min-h-[44px]"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700 p-1 min-w-[32px] min-h-[32px] flex items-center justify-center"
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="w-4 h-4" />
               </button>
             )}
           </div>
 
-          {/* Sort Selector */}
+          {/* Sort Selector with accessible touch target */}
           <div className="flex items-center gap-2 self-end sm:self-auto w-full sm:w-auto justify-between sm:justify-end">
             <span className="text-xs text-stone-500">
               Showing <strong className="text-brand-obsidian">{filteredProducts.length}</strong> items
@@ -231,7 +231,7 @@ export function CollectionClient({ initialCategories, initialProducts }: Collect
                 id="sort-select"
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
-                className="text-xs rounded-xl border border-stone-200 bg-white px-3 py-1.5 text-stone-800 focus:outline-none focus:border-brand-gold"
+                className="text-base sm:text-xs rounded-xl border border-stone-200 bg-white px-3 py-2 sm:py-1.5 text-stone-800 focus:outline-none focus:border-brand-gold min-h-[40px]"
               >
                 <option value="featured">Featured First</option>
                 <option value="price-asc">Price: Low to High</option>

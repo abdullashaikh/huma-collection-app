@@ -447,26 +447,38 @@ export function ProductDetailClient({ product }: { product: ProductItem }) {
         </section>
       )}
 
-      {/* Sticky Bottom Bar on Mobile Devices */}
-      <div className="fixed bottom-12 inset-x-0 z-30 lg:hidden bg-white/95 backdrop-blur-md border-t border-stone-200 p-3 shadow-luxury flex items-center justify-between gap-3">
-        <div>
-          <span className="text-[10px] text-stone-500 uppercase tracking-wider block">Total</span>
-          <span className="font-bold text-base text-brand-obsidian">₹{currentPrice.toLocaleString('en-IN')}</span>
+      {/* Sticky Bottom Bar on Mobile Devices (Replaces general bottom nav on PDP) */}
+      <div className="fixed bottom-0 inset-x-0 z-50 lg:hidden bg-white/95 backdrop-blur-md border-t border-stone-200 px-4 py-2.5 pb-[calc(0.6rem+env(safe-area-inset-bottom,0px))] shadow-[0_-8px_25px_rgba(0,0,0,0.08)] flex items-center justify-between gap-2.5">
+        <div className="flex flex-col min-w-0 pr-1">
+          <span className="text-[10px] text-stone-500 font-semibold uppercase tracking-wider block truncate">
+            {selectedVariant?.size_value ? `Size: ${selectedVariant.size_value.split(' ')[0]}` : 'Price'}
+          </span>
+          <span className="font-bold text-base text-brand-obsidian leading-tight">
+            ₹{currentPrice.toLocaleString('en-IN')}
+          </span>
         </div>
-        <div className="flex gap-2">
+
+        <div className="flex items-center gap-2 flex-1 justify-end">
+          {/* Quick WhatsApp Inquiry for this piece */}
+          <a
+            href={`https://wa.me/${phone.replace(/[^0-9]/g, '')}?text=${whatsappMessage}`}
+            target="_blank"
+            rel="noreferrer"
+            className="w-11 h-11 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white flex items-center justify-center flex-shrink-0 shadow-sm active:scale-95 transition-all"
+            title="Inquire about this piece on WhatsApp"
+            aria-label="WhatsApp Inquiry"
+          >
+            <MessageCircle className="w-5 h-5 fill-white" />
+          </a>
+
+          {/* Add to Bag CTA */}
           <button
             onClick={handleAddToCart}
             disabled={isCartLoading || !selectedVariant || selectedVariant.stockQuantity <= 0}
-            className="px-4 py-2.5 rounded-xl border border-brand-obsidian text-brand-obsidian font-semibold text-xs"
+            className="flex-1 max-w-[200px] py-3 px-3 rounded-xl bg-brand-obsidian hover:bg-stone-900 text-white font-bold text-xs shadow-md flex items-center justify-center gap-1.5 active:scale-95 transition-all disabled:opacity-50"
           >
-            Add to Bag
-          </button>
-          <button
-            onClick={handleBuyNow}
-            disabled={isCartLoading || !selectedVariant || selectedVariant.stockQuantity <= 0}
-            className="px-5 py-2.5 rounded-xl bg-brand-obsidian text-white font-semibold text-xs shadow-md"
-          >
-            Buy Now
+            <ShoppingBag className="w-4 h-4 text-brand-gold" />
+            <span>Add to Bag</span>
           </button>
         </div>
       </div>

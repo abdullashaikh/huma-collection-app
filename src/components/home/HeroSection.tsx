@@ -92,7 +92,7 @@ export const HeroSection: React.FC = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.42, ease: LUXURY_EASE }}
-              className="pt-6 grid grid-cols-3 gap-4 border-t border-stone-200/80 text-xs text-stone-600"
+              className="pt-6 grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-4 border-t border-stone-200/80 text-[11px] sm:text-xs text-stone-600"
             >
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-brand-gold-dark flex-shrink-0" />
@@ -102,7 +102,7 @@ export const HeroSection: React.FC = () => {
                 <CheckCircle2 className="w-4 h-4 text-brand-gold-dark flex-shrink-0" />
                 <span className="font-semibold text-stone-800">In-Store Discovery</span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 col-span-2 sm:col-span-1">
                 <Star className="w-4 h-4 text-brand-gold-dark flex-shrink-0 fill-brand-gold" />
                 <span className="font-semibold text-stone-800">Online Store Nov 2026</span>
               </div>
@@ -110,7 +110,7 @@ export const HeroSection: React.FC = () => {
           </div>
 
           {/* Right Column: Hero Visual Showcase Card with smooth depth */}
-          <div className="lg:col-span-5 hidden lg:block relative">
+          <div className="lg:col-span-5 block relative mt-6 lg:mt-0 max-w-sm mx-auto w-full">
             {/* Subtle backlight halo */}
             <div className="absolute -inset-3 bg-gradient-to-tr from-brand-gold/25 via-brand-sand to-transparent rounded-[4.5rem] blur-xl opacity-80" />
 
@@ -118,7 +118,7 @@ export const HeroSection: React.FC = () => {
               initial={{ opacity: 0, scale: 0.94, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{ duration: 0.9, delay: 0.22, ease: LUXURY_EASE }}
-              className="relative mx-auto max-w-sm rounded-t-[5rem] rounded-b-3xl overflow-hidden border-2 border-brand-gold/30 shadow-2xl bg-white"
+              className="relative mx-auto max-w-sm rounded-t-[4rem] sm:rounded-t-[5rem] rounded-b-2xl sm:rounded-b-3xl overflow-hidden border-2 border-brand-gold/30 shadow-2xl bg-white"
             >
               <div className="relative aspect-[3/4] w-full group">
                 <Image

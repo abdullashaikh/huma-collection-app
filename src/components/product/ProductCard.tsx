@@ -196,7 +196,7 @@ export function ProductCard({ product }: ProductCardProps) {
       </Link>
 
       {/* Information Container */}
-      <div className="p-4 flex flex-col flex-1 justify-between">
+      <div className="p-3 sm:p-4 flex flex-col flex-1 justify-between">
         <div>
           {/* Category / Fabric label + Audience Badge */}
           <div className="flex items-center justify-between gap-1">
@@ -212,34 +212,34 @@ export function ProductCard({ product }: ProductCardProps) {
 
           {/* Product Title */}
           <Link href={productHref} className="block mt-1">
-            <h3 className="font-serif text-base font-semibold text-brand-obsidian line-clamp-1 group-hover:text-brand-gold-dark transition-colors">
+            <h3 className="font-serif text-sm sm:text-base font-semibold text-brand-obsidian line-clamp-1 group-hover:text-brand-gold-dark transition-colors">
               {product.name}
             </h3>
           </Link>
 
           {/* Short description */}
           {shortDesc && (
-            <p className="text-xs text-stone-600 line-clamp-1 mt-1">
+            <p className="text-[11px] sm:text-xs text-stone-600 line-clamp-1 mt-0.5 sm:mt-1">
               {shortDesc}
             </p>
           )}
         </div>
 
-        {/* Pricing & Primary CTA with accessible touch target (min-h-[44px]) */}
-        <div className="pt-3 mt-3 border-t border-stone-100 flex items-center justify-between gap-2">
-          <div className="flex flex-col">
-            <div className="flex items-baseline gap-2">
-              <span className="font-bold text-base sm:text-lg text-brand-obsidian">
+        {/* Pricing & Primary CTA with accessible touch target */}
+        <div className="pt-2.5 sm:pt-3 mt-2.5 sm:mt-3 border-t border-stone-100 flex items-center justify-between gap-1.5 sm:gap-2">
+          <div className="flex flex-col min-w-0">
+            <div className="flex items-baseline gap-1 sm:gap-1.5">
+              <span className="font-bold text-sm sm:text-base text-brand-obsidian">
                 ₹{displayPrice.toLocaleString('en-IN')}
               </span>
               {salePrice && basePrice > salePrice && (
-                <span className="text-xs text-stone-400 line-through">
+                <span className="text-[10px] sm:text-xs text-stone-400 line-through truncate">
                   ₹{basePrice.toLocaleString('en-IN')}
                 </span>
               )}
             </div>
             {discountPercent && (
-              <span className="text-[11px] font-bold text-red-600 mt-0.5">
+              <span className="text-[10px] sm:text-[11px] font-bold text-red-600">
                 {discountPercent}% OFF
               </span>
             )}
@@ -247,11 +247,11 @@ export function ProductCard({ product }: ProductCardProps) {
 
           <Link
             href={productHref}
-            className="min-h-[44px] px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 bg-brand-obsidian text-white hover:bg-stone-800 transition-all shadow-sm active:scale-95 group/btn"
+            className="min-h-[38px] sm:min-h-[44px] px-2.5 sm:px-4 py-1.5 sm:py-2.5 rounded-xl text-[11px] sm:text-xs font-bold flex items-center gap-1 sm:gap-1.5 bg-brand-obsidian text-white hover:bg-stone-800 transition-all shadow-sm active:scale-95 group/btn flex-shrink-0"
             title="Explore Piece"
             aria-label={`Explore ${product.name}`}
           >
-            <span>View Piece</span>
+            <span>View<span className="hidden sm:inline"> Piece</span></span>
             <ArrowRight className="w-3.5 h-3.5 text-brand-gold-light group-hover/btn:translate-x-0.5 transition-transform" />
           </Link>
         </div>
