@@ -274,7 +274,7 @@ export function CollectionClient({ initialCategories, initialProducts }: Collect
                   }`}
                 >
                   {c.name}
-                  {c.productCount !== undefined && (
+                  {c.productCount !== undefined && Number(c.productCount) > 0 && (
                     <span className="ml-1.5 text-[10px] opacity-70">({c.productCount})</span>
                   )}
                 </button>

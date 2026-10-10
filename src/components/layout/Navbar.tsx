@@ -1,16 +1,16 @@
 'use client';
 
-import { Heart, MapPin, Menu, Phone, Search, ShoppingBag, User, X } from 'lucide-react';
+import { ArrowRight, ChevronDown, ChevronRight, Heart, MapPin, Menu, Phone, Search, ShoppingBag, Sparkles, User, X } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useCart } from '../../lib/cart-context';
 import { OtpModal } from '../auth/OtpModal';
 
 import { Category } from '../../types';
 import { FALLBACK_CATEGORIES } from '../../lib/fallback-data';
-import { ChevronDown, Sparkles } from 'lucide-react';
 
 const STORE_PHONE = process.env.NEXT_PUBLIC_STORE_PHONE || '8200617009';
 const MAPS_URL = process.env.NEXT_PUBLIC_MAPS_URL || 'https://maps.app.goo.gl/Uocg3MLVbusi17NG6';
@@ -25,6 +25,18 @@ export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [categories, setCategories] = useState<Category[]>(FALLBACK_CATEGORIES);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleMouseEnter = (menuKey: string) => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setActiveDropdown(menuKey);
+  };
+
+  const handleMouseLeave = () => {
+    timeoutRef.current = setTimeout(() => {
+      setActiveDropdown(null);
+    }, 180);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -138,6 +150,7 @@ export function Navbar() {
 
             {/* Desktop Navigation Links with Dynamic Category Dropdowns */}
             <nav className="hidden lg:flex items-center space-x-4 xl:space-x-6" aria-label="Main Navigation">
+              {/* Home */}
               <Link
                 href="/"
                 aria-current={pathname === '/' ? 'page' : undefined}
@@ -153,156 +166,372 @@ export function Navbar() {
                 )}
               </Link>
 
-              {/* Burqa Flagship Link */}
-              <Link
-                href="/burqa"
-                aria-current={pathname === '/burqa' || pathname?.startsWith('/burqa/') ? 'page' : undefined}
-                className={`text-xs tracking-wider transition-all duration-200 relative py-2 ${
-                  pathname === '/burqa' || pathname?.startsWith('/burqa/')
-                    ? 'text-brand-obsidian font-bold'
-                    : 'text-brand-gold-dark hover:text-brand-obsidian font-semibold'
-                }`}
-              >
-                Burqa Collection
-                {(pathname === '/burqa' || pathname?.startsWith('/burqa/')) && (
-                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-gold rounded-full" />
-                )}
-              </Link>
-
-              {/* Women Dropdown */}
+              {/* Women Dropdown (Luxury Mega-Menu) */}
               <div
                 className="relative"
-                onMouseEnter={() => setActiveDropdown('women')}
-                onMouseLeave={() => setActiveDropdown(null)}
+                onMouseEnter={() => handleMouseEnter('women')}
+                onMouseLeave={handleMouseLeave}
               >
                 <Link
                   href="/collection?audience=WOMEN"
-                  className={`text-xs tracking-wider transition-all duration-200 py-2 inline-flex items-center gap-1 ${
-                    pathname === '/collection' && pathname?.includes('WOMEN')
+                  className={`text-xs tracking-wider transition-all duration-200 py-2 inline-flex items-center gap-1.5 ${
+                    activeDropdown === 'women' || (pathname === '/collection' && pathname?.includes('WOMEN'))
                       ? 'text-brand-obsidian font-bold'
                       : 'text-stone-600 hover:text-brand-obsidian font-medium'
                   }`}
                 >
                   <span>Women</span>
-                  <ChevronDown className="w-3.5 h-3.5 text-stone-400 group-hover:text-brand-obsidian transition-transform" />
+                  <ChevronDown
+                    className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                      activeDropdown === 'women' ? 'rotate-180 text-brand-gold-dark' : 'text-stone-400 group-hover:text-brand-obsidian'
+                    }`}
+                  />
                 </Link>
 
-                {activeDropdown === 'women' && (
-                  <div className="absolute top-full left-0 w-64 bg-white/98 backdrop-blur-md rounded-2xl shadow-luxury border border-stone-200/90 py-3 z-50">
-                    <div className="px-4 py-1.5 border-b border-stone-100 flex items-center justify-between">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-brand-gold-dark">Women&apos;s Modest</span>
-                      <Link
-                        href="/collection?audience=WOMEN"
-                        className="text-[10px] font-semibold text-stone-500 hover:text-brand-obsidian underline"
-                      >
-                        View All
-                      </Link>
-                    </div>
-                    <div className="py-1 max-h-72 overflow-y-auto">
-                      {womenCategories.map((c) => (
-                        <Link
-                          key={c.id}
-                          href={c.slug === 'burqa' ? '/burqa' : `/category/${c.slug}`}
-                          className="px-4 py-2 text-xs text-stone-700 hover:bg-brand-sand/50 hover:text-brand-obsidian flex items-center justify-between transition-colors"
-                        >
-                          <span>{c.name}</span>
-                          <span className="text-[10px] text-stone-400">{c.productCount ?? 0}</span>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                <AnimatePresence>
+                  {activeDropdown === 'women' && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8, scale: 0.99 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 6, scale: 0.99 }}
+                      transition={{ duration: 0.18, ease: 'easeOut' }}
+                      className="absolute top-full -left-2 sm:left-0 pt-2.5 z-50 pointer-events-auto"
+                    >
+                      <div className="w-[580px] lg:w-[620px] bg-white rounded-2xl shadow-[0_25px_60px_-15px_rgba(28,27,26,0.22)] border border-stone-200/90 overflow-hidden ring-1 ring-black/5">
+                        <div className="grid grid-cols-12 divide-x divide-stone-100">
+                          {/* Categories List (7 Cols) */}
+                          <div className="col-span-7 p-5 bg-white">
+                            <div className="flex items-center justify-between pb-3 mb-3 border-b border-stone-100">
+                              <div className="flex items-center gap-1.5 text-[11px] font-bold tracking-widest uppercase text-brand-gold-dark">
+                                <Sparkles className="w-3.5 h-3.5 text-brand-gold" />
+                                <span>Women&apos;s Modest Wardrobe</span>
+                              </div>
+                              <Link
+                                href="/collection?audience=WOMEN"
+                                className="text-[11px] font-semibold text-stone-500 hover:text-brand-obsidian flex items-center gap-1 group/all transition-colors"
+                              >
+                                <span>View All</span>
+                                <ArrowRight className="w-3 h-3 group-hover/all:translate-x-0.5 transition-transform" />
+                              </Link>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-1.5">
+                              {womenCategories.map((c) => (
+                                <Link
+                                  key={c.id}
+                                  href={c.slug === 'burqa' ? '/burqa' : `/category/${c.slug}`}
+                                  className="group/item flex items-center justify-between px-3 py-2 rounded-xl hover:bg-brand-sand/50 transition-all text-xs text-stone-700 hover:text-brand-obsidian"
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-brand-gold/60 group-hover/item:bg-brand-gold group-hover/item:scale-125 transition-all" />
+                                    <span className="font-medium group-hover/item:font-semibold transition-all">
+                                      {c.name}
+                                    </span>
+                                  </div>
+                                  {c.slug === 'burqa' ? (
+                                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-brand-gold/20 text-brand-gold-dark uppercase tracking-wider">
+                                      Flagship
+                                    </span>
+                                  ) : (
+                                    <ChevronRight className="w-3.5 h-3.5 text-stone-300 opacity-0 group-hover/item:opacity-100 group-hover/item:translate-x-0.5 group-hover/item:text-brand-gold-dark transition-all" />
+                                  )}
+                                </Link>
+                              ))}
+                            </div>
+
+                            <div className="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-[11px] text-stone-500">
+                              <span>✨ Bespoke tailoring &amp; custom sizing</span>
+                              <span className="font-semibold text-brand-obsidian">Available In-Store</span>
+                            </div>
+                          </div>
+
+                          {/* Curated Spotlight Card (5 Cols) */}
+                          <div className="col-span-5 p-4 bg-brand-ivory/60 flex flex-col justify-between">
+                            <div className="relative h-44 rounded-xl overflow-hidden group/card shadow-sm border border-stone-200/80">
+                              <Image
+                                src="https://images.unsplash.com/photo-1584282479901-705a6104bc99?auto=format&fit=crop&w=600&q=80"
+                                alt="Royal Burqa Line"
+                                fill
+                                sizes="240px"
+                                className="object-cover group-hover/card:scale-105 transition-transform duration-500"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-brand-obsidian via-brand-obsidian/40 to-transparent" />
+                              <div className="absolute inset-x-0 bottom-0 p-3.5 text-white">
+                                <span className="text-[10px] font-bold tracking-widest uppercase text-brand-gold-light block mb-0.5">
+                                  Signature Flagship
+                                </span>
+                                <h4 className="font-serif text-sm font-bold text-white leading-tight">
+                                  Royal Saudi Nida Burqas
+                                </h4>
+                                <p className="text-[11px] text-stone-300 line-clamp-1 mt-0.5">
+                                  360° Flare cuts with wudu-friendly cuffs
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="mt-3">
+                              <Link
+                                href="/burqa"
+                                className="w-full py-2 px-3 rounded-xl bg-brand-obsidian hover:bg-black text-brand-gold-light text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm transition-all"
+                              >
+                                <span>Explore Burqa Showcase</span>
+                                <ArrowRight className="w-3.5 h-3.5 text-brand-gold" />
+                              </Link>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
 
-              {/* Men Dropdown */}
+              {/* Men Dropdown (Luxury Mega-Menu) */}
               <div
                 className="relative"
-                onMouseEnter={() => setActiveDropdown('men')}
-                onMouseLeave={() => setActiveDropdown(null)}
+                onMouseEnter={() => handleMouseEnter('men')}
+                onMouseLeave={handleMouseLeave}
               >
                 <Link
                   href="/collection?audience=MEN"
-                  className={`text-xs tracking-wider transition-all duration-200 py-2 inline-flex items-center gap-1 ${
-                    pathname === '/collection' && pathname?.includes('MEN')
+                  className={`text-xs tracking-wider transition-all duration-200 py-2 inline-flex items-center gap-1.5 ${
+                    activeDropdown === 'men' || (pathname === '/collection' && pathname?.includes('MEN'))
                       ? 'text-brand-obsidian font-bold'
                       : 'text-stone-600 hover:text-brand-obsidian font-medium'
                   }`}
                 >
                   <span>Men</span>
-                  <ChevronDown className="w-3.5 h-3.5 text-stone-400 group-hover:text-brand-obsidian transition-transform" />
+                  <ChevronDown
+                    className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                      activeDropdown === 'men' ? 'rotate-180 text-brand-gold-dark' : 'text-stone-400 group-hover:text-brand-obsidian'
+                    }`}
+                  />
                 </Link>
 
-                {activeDropdown === 'men' && (
-                  <div className="absolute top-full left-0 w-64 bg-white/98 backdrop-blur-md rounded-2xl shadow-luxury border border-stone-200/90 py-3 z-50">
-                    <div className="px-4 py-1.5 border-b border-stone-100 flex items-center justify-between">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-brand-gold-dark">Men&apos;s Islamic Wear</span>
-                      <Link
-                        href="/collection?audience=MEN"
-                        className="text-[10px] font-semibold text-stone-500 hover:text-brand-obsidian underline"
-                      >
-                        View All
-                      </Link>
-                    </div>
-                    <div className="py-1 max-h-72 overflow-y-auto">
-                      {menCategories.map((c) => (
-                        <Link
-                          key={c.id}
-                          href={`/category/${c.slug}`}
-                          className="px-4 py-2 text-xs text-stone-700 hover:bg-brand-sand/50 hover:text-brand-obsidian flex items-center justify-between transition-colors"
-                        >
-                          <span>{c.name}</span>
-                          <span className="text-[10px] text-stone-400">{c.productCount ?? 0}</span>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                <AnimatePresence>
+                  {activeDropdown === 'men' && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8, scale: 0.99 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 6, scale: 0.99 }}
+                      transition={{ duration: 0.18, ease: 'easeOut' }}
+                      className="absolute top-full -left-16 lg:-left-12 pt-2.5 z-50 pointer-events-auto"
+                    >
+                      <div className="w-[560px] lg:w-[600px] bg-white rounded-2xl shadow-[0_25px_60px_-15px_rgba(28,27,26,0.22)] border border-stone-200/90 overflow-hidden ring-1 ring-black/5">
+                        <div className="grid grid-cols-12 divide-x divide-stone-100">
+                          {/* Categories List (7 Cols) */}
+                          <div className="col-span-7 p-5 bg-white">
+                            <div className="flex items-center justify-between pb-3 mb-3 border-b border-stone-100">
+                              <div className="flex items-center gap-1.5 text-[11px] font-bold tracking-widest uppercase text-brand-gold-dark">
+                                <Sparkles className="w-3.5 h-3.5 text-brand-gold" />
+                                <span>Men&apos;s Islamic Wear</span>
+                              </div>
+                              <Link
+                                href="/collection?audience=MEN"
+                                className="text-[11px] font-semibold text-stone-500 hover:text-brand-obsidian flex items-center gap-1 group/all transition-colors"
+                              >
+                                <span>View All</span>
+                                <ArrowRight className="w-3 h-3 group-hover/all:translate-x-0.5 transition-transform" />
+                              </Link>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-1.5">
+                              {menCategories.map((c) => (
+                                <Link
+                                  key={c.id}
+                                  href={`/category/${c.slug}`}
+                                  className="group/item flex items-center justify-between px-3 py-2 rounded-xl hover:bg-brand-sand/50 transition-all text-xs text-stone-700 hover:text-brand-obsidian"
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-brand-gold/60 group-hover/item:bg-brand-gold group-hover/item:scale-125 transition-all" />
+                                    <span className="font-medium group-hover/item:font-semibold transition-all">
+                                      {c.name}
+                                    </span>
+                                  </div>
+                                  <ChevronRight className="w-3.5 h-3.5 text-stone-300 opacity-0 group-hover/item:opacity-100 group-hover/item:translate-x-0.5 group-hover/item:text-brand-gold-dark transition-all" />
+                                </Link>
+                              ))}
+                            </div>
+
+                            <div className="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-[11px] text-stone-500">
+                              <span>🌿 100% Non-Alcoholic Concentrated Attars</span>
+                              <span className="font-semibold text-brand-obsidian">Authentic</span>
+                            </div>
+                          </div>
+
+                          {/* Curated Spotlight Card (5 Cols) */}
+                          <div className="col-span-5 p-4 bg-brand-ivory/60 flex flex-col justify-between">
+                            <div className="relative h-44 rounded-xl overflow-hidden group/card shadow-sm border border-stone-200/80">
+                              <Image
+                                src="https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=600&q=80"
+                                alt="Men's Sunnah Collection"
+                                fill
+                                sizes="240px"
+                                className="object-cover group-hover/card:scale-105 transition-transform duration-500"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-brand-obsidian via-brand-obsidian/40 to-transparent" />
+                              <div className="absolute inset-x-0 bottom-0 p-3.5 text-white">
+                                <span className="text-[10px] font-bold tracking-widest uppercase text-brand-gold-light block mb-0.5">
+                                  Sunnah Heritage
+                                </span>
+                                <h4 className="font-serif text-sm font-bold text-white leading-tight">
+                                  Artisanal Kufis &amp; Oud
+                                </h4>
+                                <p className="text-[11px] text-stone-300 line-clamp-1 mt-0.5">
+                                  Handcrafted embroidery &amp; pure Arabian scents
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="mt-3">
+                              <Link
+                                href="/collection?audience=MEN"
+                                className="w-full py-2 px-3 rounded-xl bg-brand-obsidian hover:bg-black text-brand-gold-light text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm transition-all"
+                              >
+                                <span>Discover Men&apos;s Wear</span>
+                                <ArrowRight className="w-3.5 h-3.5 text-brand-gold" />
+                              </Link>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
 
-              {/* Shared Essentials Dropdown */}
+              {/* Shared Essentials Dropdown (Luxury Mega-Menu) */}
               <div
                 className="relative"
-                onMouseEnter={() => setActiveDropdown('common')}
-                onMouseLeave={() => setActiveDropdown(null)}
+                onMouseEnter={() => handleMouseEnter('common')}
+                onMouseLeave={handleMouseLeave}
               >
                 <Link
                   href="/collection?audience=ALL"
-                  className={`text-xs tracking-wider transition-all duration-200 py-2 inline-flex items-center gap-1 ${
-                    pathname === '/collection' && pathname?.includes('ALL')
+                  className={`text-xs tracking-wider transition-all duration-200 py-2 inline-flex items-center gap-1.5 ${
+                    activeDropdown === 'common' || (pathname === '/collection' && pathname?.includes('ALL'))
                       ? 'text-brand-obsidian font-bold'
                       : 'text-stone-600 hover:text-brand-obsidian font-medium'
                   }`}
                 >
                   <span>Shared Essentials</span>
-                  <ChevronDown className="w-3.5 h-3.5 text-stone-400 group-hover:text-brand-obsidian transition-transform" />
+                  <ChevronDown
+                    className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                      activeDropdown === 'common' ? 'rotate-180 text-brand-gold-dark' : 'text-stone-400 group-hover:text-brand-obsidian'
+                    }`}
+                  />
                 </Link>
 
-                {activeDropdown === 'common' && (
-                  <div className="absolute top-full left-0 w-64 bg-white/98 backdrop-blur-md rounded-2xl shadow-luxury border border-stone-200/90 py-3 z-50">
-                    <div className="px-4 py-1.5 border-b border-stone-100 flex items-center justify-between">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-brand-gold-dark">Sunnah &amp; Pilgrimage</span>
-                      <Link
-                        href="/collection?audience=ALL"
-                        className="text-[10px] font-semibold text-stone-500 hover:text-brand-obsidian underline"
-                      >
-                        View All
-                      </Link>
-                    </div>
-                    <div className="py-1 max-h-72 overflow-y-auto">
-                      {commonCategories.map((c) => (
-                        <Link
-                          key={c.id}
-                          href={`/category/${c.slug}`}
-                          className="px-4 py-2 text-xs text-stone-700 hover:bg-brand-sand/50 hover:text-brand-obsidian flex items-center justify-between transition-colors"
-                        >
-                          <span>{c.name}</span>
-                          <span className="text-[10px] text-stone-400">{c.productCount ?? 0}</span>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                <AnimatePresence>
+                  {activeDropdown === 'common' && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8, scale: 0.99 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 6, scale: 0.99 }}
+                      transition={{ duration: 0.18, ease: 'easeOut' }}
+                      className="absolute top-full -left-44 lg:-left-40 pt-2.5 z-50 pointer-events-auto"
+                    >
+                      <div className="w-[560px] lg:w-[600px] bg-white rounded-2xl shadow-[0_25px_60px_-15px_rgba(28,27,26,0.22)] border border-stone-200/90 overflow-hidden ring-1 ring-black/5">
+                        <div className="grid grid-cols-12 divide-x divide-stone-100">
+                          {/* Categories List (7 Cols) */}
+                          <div className="col-span-7 p-5 bg-white">
+                            <div className="flex items-center justify-between pb-3 mb-3 border-b border-stone-100">
+                              <div className="flex items-center gap-1.5 text-[11px] font-bold tracking-widest uppercase text-brand-gold-dark">
+                                <Sparkles className="w-3.5 h-3.5 text-brand-gold" />
+                                <span>Sunnah &amp; Pilgrimage</span>
+                              </div>
+                              <Link
+                                href="/collection?audience=ALL"
+                                className="text-[11px] font-semibold text-stone-500 hover:text-brand-obsidian flex items-center gap-1 group/all transition-colors"
+                              >
+                                <span>View All</span>
+                                <ArrowRight className="w-3 h-3 group-hover/all:translate-x-0.5 transition-transform" />
+                              </Link>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-1.5">
+                              {commonCategories.map((c) => (
+                                <Link
+                                  key={c.id}
+                                  href={`/category/${c.slug}`}
+                                  className="group/item flex items-center justify-between px-3 py-2 rounded-xl hover:bg-brand-sand/50 transition-all text-xs text-stone-700 hover:text-brand-obsidian"
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-brand-gold/60 group-hover/item:bg-brand-gold group-hover/item:scale-125 transition-all" />
+                                    <span className="font-medium group-hover/item:font-semibold transition-all">
+                                      {c.name}
+                                    </span>
+                                  </div>
+                                  <ChevronRight className="w-3.5 h-3.5 text-stone-300 opacity-0 group-hover/item:opacity-100 group-hover/item:translate-x-0.5 group-hover/item:text-brand-gold-dark transition-all" />
+                                </Link>
+                              ))}
+                            </div>
+
+                            <div className="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-[11px] text-stone-500">
+                              <span>🕋 Complete Hajj &amp; Umrah Travel Packs</span>
+                              <span className="font-semibold text-brand-obsidian">Pilgrimage</span>
+                            </div>
+                          </div>
+
+                          {/* Curated Spotlight Card (5 Cols) */}
+                          <div className="col-span-5 p-4 bg-brand-ivory/60 flex flex-col justify-between">
+                            <div className="relative h-44 rounded-xl overflow-hidden group/card shadow-sm border border-stone-200/80">
+                              <Image
+                                src="https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=600&q=80"
+                                alt="Hajj and Umrah Essentials"
+                                fill
+                                sizes="240px"
+                                className="object-cover group-hover/card:scale-105 transition-transform duration-500"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-brand-obsidian via-brand-obsidian/40 to-transparent" />
+                              <div className="absolute inset-x-0 bottom-0 p-3.5 text-white">
+                                <span className="text-[10px] font-bold tracking-widest uppercase text-brand-gold-light block mb-0.5">
+                                  Sacred Journey
+                                </span>
+                                <h4 className="font-serif text-sm font-bold text-white leading-tight">
+                                  Hajj &amp; Umrah Essentials
+                                </h4>
+                                <p className="text-[11px] text-stone-300 line-clamp-1 mt-0.5">
+                                  Ihram sets, prayer beads &amp; jacquard rugs
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="mt-3">
+                              <Link
+                                href="/collection?audience=ALL"
+                                className="w-full py-2 px-3 rounded-xl bg-brand-obsidian hover:bg-black text-brand-gold-light text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm transition-all"
+                              >
+                                <span>Explore Sacred Gifts</span>
+                                <ArrowRight className="w-3.5 h-3.5 text-brand-gold" />
+                              </Link>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
+
+              {/* Burqa Flagship Link */}
+              <Link
+                href="/burqa"
+                aria-current={pathname === '/burqa' || pathname?.startsWith('/burqa/') ? 'page' : undefined}
+                className={`text-xs tracking-wider transition-all duration-200 relative py-2 inline-flex items-center gap-1.5 ${
+                  pathname === '/burqa' || pathname?.startsWith('/burqa/')
+                    ? 'text-brand-obsidian font-bold'
+                    : 'text-brand-gold-dark hover:text-brand-obsidian font-semibold'
+                }`}
+              >
+                <span>Burqa Flagship</span>
+                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-brand-gold/15 text-brand-gold-dark uppercase tracking-wider hidden xl:inline">
+                  Bespoke
+                </span>
+                {(pathname === '/burqa' || pathname?.startsWith('/burqa/')) && (
+                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-gold rounded-full" />
+                )}
+              </Link>
 
               {/* All Collections Link */}
               <Link
@@ -322,7 +551,7 @@ export function Navbar() {
               {/* Direct Call Button (Desktop/Tablet) */}
               <a
                 href={`tel:+91${STORE_PHONE}`}
-                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-brand-sand/80 hover:bg-brand-sand text-brand-obsidian transition-colors border border-stone-200"
+                className="hidden xl:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-brand-sand/80 hover:bg-brand-sand text-brand-obsidian transition-colors border border-stone-200"
                 title={`Call Boutique: ${STORE_PHONE}`}
               >
                 <Phone className="w-3.5 h-3.5 text-brand-gold-dark" />
@@ -334,7 +563,7 @@ export function Navbar() {
                 href={MAPS_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-brand-obsidian text-brand-gold-light hover:bg-black transition-colors"
+                className="hidden 2xl:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-brand-obsidian text-brand-gold-light hover:bg-black transition-colors"
                 title="Open Location in Google Maps"
               >
                 <MapPin className="w-3.5 h-3.5 text-brand-gold" />

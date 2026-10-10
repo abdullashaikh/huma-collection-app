@@ -162,7 +162,11 @@ export const CategoryShowcase: React.FC<CategoryShowcaseProps> = ({ categories }
                   {/* Bottom Content Card (Comfortable vertical breathing room & padding) */}
                   <div className="absolute inset-x-0 bottom-0 p-5 pb-6 text-white z-10 transform transition-transform duration-300">
                     <span className="text-xs text-brand-gold font-medium tracking-wide uppercase block mb-1.5">
-                      <AnimatedCounter target={Number(pieceCount)} suffix="+ Designs" />
+                      {Number(pieceCount) > 0 ? (
+                        <AnimatedCounter target={Number(pieceCount)} suffix="+ Designs" />
+                      ) : (
+                        'Signature Collection'
+                      )}
                     </span>
                     <h3 className="font-serif text-base sm:text-lg font-bold text-white group-hover:text-brand-gold transition-colors leading-tight line-clamp-1">
                       {cat.name}
