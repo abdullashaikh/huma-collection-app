@@ -41,16 +41,16 @@ export function ProductCard({ product }: ProductCardProps) {
   const viewerImages = React.useMemo(() => {
     // 1. If explicit 360 sequence is configured
     if (product.images_360 && product.images_360.length > 0) {
-      return product.images_360;
+      return product.images_360.map((u) => getMediaUrl(u));
     }
 
     // 2. If configured with structured views object
     if (product.views) {
       const viewsList: string[] = [];
-      if (product.views.front) viewsList.push(product.views.front);
-      if (product.views.side) viewsList.push(product.views.side);
-      if (product.views.back) viewsList.push(product.views.back);
-      if (product.views.detail) viewsList.push(product.views.detail);
+      if (product.views.front) viewsList.push(getMediaUrl(product.views.front));
+      if (product.views.side) viewsList.push(getMediaUrl(product.views.side));
+      if (product.views.back) viewsList.push(getMediaUrl(product.views.back));
+      if (product.views.detail) viewsList.push(getMediaUrl(product.views.detail));
       if (viewsList.length > 0) return viewsList;
     }
 
@@ -62,7 +62,7 @@ export function ProductCard({ product }: ProductCardProps) {
         return (a.sortOrder || 0) - (b.sortOrder || 0);
       });
       return sorted.map((img) => ({
-        url: img.s3Url,
+        url: getMediaUrl(img.s3Url),
         alt: img.altText || product.name,
         label: img.viewType || (img.isPrimary ? 'Front View' : undefined),
       }));

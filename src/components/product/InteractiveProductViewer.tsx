@@ -3,6 +3,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 import { RotateCw, MoveHorizontal, ChevronLeft, ChevronRight, Eye } from 'lucide-react';
+import { getMediaUrl } from '../../lib/media';
 
 export interface ProductImageView {
   url: string;
@@ -176,13 +177,13 @@ export function InteractiveProductViewer({
           label = idx === 0 ? 'Front' : idx === 1 ? 'Side' : idx === 2 ? 'Back' : 'Detail';
         }
         return {
-          url: item,
+          url: getMediaUrl(item),
           alt: `${productName} - ${label}`,
           label,
         };
       }
       return {
-        url: item.url,
+        url: getMediaUrl(item.url),
         alt: item.alt || `${productName} - ${item.label || `View ${idx + 1}`}`,
         label: item.label || `View ${idx + 1}`,
         viewType: item.viewType,

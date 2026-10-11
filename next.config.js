@@ -11,6 +11,18 @@ const nextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'api.humacollection.in',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.humacollection.in',
+      },
+      {
+        protocol: 'https',
+        hostname: 'humacollection.in',
+      },
+      {
+        protocol: 'https',
         hostname: 'media.humacollection.in',
       },
       {

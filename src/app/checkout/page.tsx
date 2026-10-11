@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { fetchApi, getSessionId } from '../../lib/api';
 import { useCart } from '../../lib/cart-context';
+import { getMediaUrl } from '../../lib/media';
 
 declare global {
   interface Window {
@@ -521,7 +522,7 @@ export default function CheckoutPage() {
                 <div key={item.id} className="flex gap-3 text-xs">
                   <div className="relative w-12 h-16 rounded-lg overflow-hidden bg-stone-100 flex-shrink-0">
                     <Image
-                      src={item.imageUrl || 'https://images.unsplash.com/photo-1584282479901-705a6104bc99?auto=format&fit=crop&w=200&q=80'}
+                      src={getMediaUrl(item.imageUrl) || 'https://images.unsplash.com/photo-1584282479901-705a6104bc99?auto=format&fit=crop&w=200&q=80'}
                       alt={item.productName}
                       fill
                       className="object-cover object-top"

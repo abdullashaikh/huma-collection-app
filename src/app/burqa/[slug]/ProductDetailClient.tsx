@@ -30,6 +30,7 @@ import { InteractiveProductViewer } from '../../../components/product/Interactiv
 import { fetchApi } from '../../../lib/api';
 import { useCart } from '../../../lib/cart-context';
 import { ProductItem } from '../../../types';
+import { getMediaUrl } from '../../../lib/media';
 
 export function ProductDetailClient({ product }: { product: ProductItem }) {
   const router = useRouter();
@@ -51,10 +52,11 @@ export function ProductDetailClient({ product }: { product: ProductItem }) {
       id: 1,
       productId: product.id,
       s3Key: '',
-      s3Url:
+      s3Url: getMediaUrl(
         (product as any).primaryImageUrl ||
         (product as any).primary_image_url ||
-        'https://images.unsplash.com/photo-1584282479901-705a6104bc99?auto=format&fit=crop&w=1200&q=85',
+        'https://images.unsplash.com/photo-1584282479901-705a6104bc99?auto=format&fit=crop&w=1200&q=85'
+      ),
       altText: product.name,
       sortOrder: 1,
       isPrimary: true,
@@ -65,18 +67,18 @@ export function ProductDetailClient({ product }: { product: ProductItem }) {
   // Prepare views for interactive 360 / multi-view exploration
   const detailViewerImages = React.useMemo(() => {
     if (product.images_360 && product.images_360.length > 0) {
-      return product.images_360;
+      return product.images_360.map((u) => getMediaUrl(u));
     }
     if (product.views) {
       const viewsList: { url: string; label: string }[] = [];
-      if (product.views.front) viewsList.push({ url: product.views.front, label: 'Front View' });
-      if (product.views.side) viewsList.push({ url: product.views.side, label: 'Side Angle' });
-      if (product.views.back) viewsList.push({ url: product.views.back, label: 'Back View' });
-      if (product.views.detail) viewsList.push({ url: product.views.detail, label: 'Fabric Detail' });
+      if (product.views.front) viewsList.push({ url: getMediaUrl(product.views.front), label: 'Front View' });
+      if (product.views.side) viewsList.push({ url: getMediaUrl(product.views.side), label: 'Side Angle' });
+      if (product.views.back) viewsList.push({ url: getMediaUrl(product.views.back), label: 'Back View' });
+      if (product.views.detail) viewsList.push({ url: getMediaUrl(product.views.detail), label: 'Fabric Detail' });
       if (viewsList.length > 0) return viewsList;
     }
     return images.map((img: any, idx: number) => ({
-      url: img.s3Url,
+      url: getMediaUrl(img.s3Url),
       alt: img.altText || `${product.name} view ${idx + 1}`,
       label: img.viewType || (idx === 0 ? 'Front View' : idx === 1 ? 'Back View' : `View ${idx + 1}`),
     }));
@@ -190,7 +192,7 @@ export function ProductDetailClient({ product }: { product: ProductItem }) {
                 }`}
               >
                 <Image
-                  src={img.s3Url}
+                  src={getMediaUrl(img.s3Url)}
                   alt={img.altText || `${product.name} thumbnail ${idx + 1}`}
                   fill
                   className="object-cover object-top"

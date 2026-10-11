@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { ProductItem } from '../../../types';
 import { FALLBACK_PRODUCTS } from '../../../lib/fallback-data';
+import { getMediaUrl } from '../../../lib/media';
 import { ProductDetailClient } from '../../burqa/[slug]/ProductDetailClient';
 
 interface Props {
@@ -32,12 +33,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: 'Product Not Found | Huma Hijab Collection' };
   }
 
-  const primaryImage =
+  const rawPrimaryImage =
     product.images?.find((img) => img.isPrimary)?.s3Url ||
     product.images?.[0]?.s3Url ||
     (product as any).primaryImageUrl ||
     (product as any).primary_image_url ||
     'https://images.unsplash.com/photo-1584282479901-705a6104bc99?auto=format&fit=crop&w=1200&q=85';
+  const primaryImage = getMediaUrl(rawPrimaryImage);
 
   return {
     title: product.seoTitle || `${product.name} | Huma Hijab Collection`,
@@ -62,18 +64,19 @@ export default async function ProductDetailPage({ params }: Props) {
     notFound();
   }
 
-  const primaryImage =
+  const rawPrimaryImage =
     product.images?.find((img) => img.isPrimary)?.s3Url ||
     product.images?.[0]?.s3Url ||
     (product as any).primaryImageUrl ||
     (product as any).primary_image_url ||
     'https://images.unsplash.com/photo-1584282479901-705a6104bc99?auto=format&fit=crop&w=1200&q=85';
+  const primaryImage = getMediaUrl(rawPrimaryImage);
 
   const jsonLdProduct = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: product.name,
-    image: product.images?.map((i) => i.s3Url) || [primaryImage],
+    image: product.images?.map((i) => getMediaUrl(i.s3Url)) || [primaryImage],
     description: product.shortDescription,
     sku: product.skuBase,
     brand: {

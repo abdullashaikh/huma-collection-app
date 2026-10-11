@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React, { useEffect } from 'react';
 import { useCart } from '../../lib/cart-context';
+import { getMediaUrl } from '../../lib/media';
 
 export function CartDrawer() {
   const { cart, isDrawerOpen, closeDrawer, updateQuantity, removeItem, isLoading } = useCart();
@@ -116,7 +117,7 @@ export function CartDrawer() {
                   {/* Thumbnail */}
                   <div className="relative w-20 h-24 rounded-lg overflow-hidden bg-stone-100 flex-shrink-0">
                     <Image
-                      src={item.imageUrl || 'https://images.unsplash.com/photo-1584282479901-705a6104bc99?auto=format&fit=crop&w=300&q=80'}
+                      src={getMediaUrl(item.imageUrl) || 'https://images.unsplash.com/photo-1584282479901-705a6104bc99?auto=format&fit=crop&w=300&q=80'}
                       alt={item.productName}
                       fill
                       className="object-cover object-top"
