@@ -43,12 +43,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: product.seoTitle || `${product.name} | Huma Hijab Collection`,
     description: product.seoDescription || product.shortDescription,
     alternates: {
-      canonical: product.canonicalUrl || `https://humahijabcollection.com/product/${product.slug}`,
+      canonical: product.canonicalUrl || `https://www.humacollection.in/product/${product.slug}`,
     },
     openGraph: {
       title: product.name,
       description: product.shortDescription,
-      url: `https://humahijabcollection.com/product/${product.slug}`,
+      url: `https://www.humacollection.in/product/${product.slug}`,
       images: [{ url: primaryImage, width: 1200, height: 630, alt: product.name }],
       type: 'website',
     },
@@ -82,7 +82,7 @@ export default async function ProductDetailPage({ params }: Props) {
     },
     offers: {
       '@type': 'Offer',
-      url: `https://humahijabcollection.com/product/${product.slug}`,
+      url: `https://www.humacollection.in/product/${product.slug}`,
       priceCurrency: 'INR',
       price: product.salePrice || product.basePrice || (product as any).sale_price || (product as any).base_price || 0,
       availability: 'https://schema.org/InStock',
@@ -106,19 +106,19 @@ export default async function ProductDetailPage({ params }: Props) {
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: 'https://humahijabcollection.com',
+        item: 'https://www.humacollection.in',
       },
       {
         '@type': 'ListItem',
         position: 2,
         name: categoryName,
-        item: `https://humahijabcollection.com/category/${categorySlug}`,
+        item: `https://www.humacollection.in/category/${categorySlug}`,
       },
       {
         '@type': 'ListItem',
         position: 3,
         name: product.name,
-        item: `https://humahijabcollection.com/product/${product.slug}`,
+        item: `https://www.humacollection.in/product/${product.slug}`,
       },
     ],
   };

@@ -56,12 +56,12 @@ export const metadata: Metadata = {
     'Burqa Store Ahmedabad',
     'Buy Burqa Online India',
   ],
-  authors: [{ name: 'Hamid Shaikh', url: 'https://humahijabcollection.com' }],
+  authors: [{ name: 'Hamid Shaikh', url: 'https://www.humacollection.in' }],
   creator: 'Huma Hijab Collection',
   publisher: 'Huma Hijab Collection',
-  metadataBase: new URL('https://humahijabcollection.com'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://www.humacollection.in'),
   alternates: {
-    canonical: 'https://humahijabcollection.com',
+    canonical: 'https://www.humacollection.in',
   },
   icons: {
     icon: [
@@ -87,7 +87,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Huma Hijab Collection | Luxury Burqas & Modest Fashion',
     description: 'Breathtaking Burqas, Abayas and Islamic essentials crafted with exquisite modesty and imported luxury fabrics.',
-    url: 'https://humahijabcollection.com',
+    url: 'https://www.humacollection.in',
     siteName: 'Huma Hijab Collection',
     images: [
       {
@@ -119,11 +119,11 @@ export default function RootLayout({
     '@graph': [
       {
         '@type': 'ClothingStore',
-        '@id': 'https://humahijabcollection.com/#store',
+        '@id': 'https://www.humacollection.in/#store',
         name: 'Huma Hijab Collection',
         alternateName: ['Huma Burqa & Modest Fashion Boutique', 'Huma Hijab Store'],
-        url: 'https://humahijabcollection.com',
-        logo: 'https://humahijabcollection.com/icon.svg',
+        url: 'https://www.humacollection.in',
+        logo: 'https://www.humacollection.in/icon.svg',
         image: 'https://images.unsplash.com/photo-1584282479901-705a6104bc99?auto=format&fit=crop&w=1200&q=85',
         description:
           'Premier boutique for luxury modest fashion, designer burqas, Saudi nida abayas, imported Turkish hijabs, and non-alcoholic attars.',
@@ -176,18 +176,18 @@ export default function RootLayout({
       },
       {
         '@type': 'WebSite',
-        '@id': 'https://humahijabcollection.com/#website',
-        url: 'https://humahijabcollection.com',
+        '@id': 'https://www.humacollection.in/#website',
+        url: 'https://www.humacollection.in',
         name: 'Huma Hijab Collection',
         description: 'Luxury Burqas & Modest Fashion Online',
         publisher: {
-          '@id': 'https://humahijabcollection.com/#store',
+          '@id': 'https://www.humacollection.in/#store',
         },
         potentialAction: {
           '@type': 'SearchAction',
           target: {
             '@type': 'EntryPoint',
-            urlTemplate: 'https://humahijabcollection.com/collection?search={search_term_string}',
+            urlTemplate: 'https://www.humacollection.in/collection?search={search_term_string}',
           },
           'query-input': 'required name=search_term_string',
         },

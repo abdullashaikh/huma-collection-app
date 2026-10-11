@@ -11,6 +11,10 @@ const nextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'media.humacollection.in',
+      },
+      {
+        protocol: 'https',
         hostname: 'media.humahijabcollection.com',
       },
       {
@@ -34,6 +38,7 @@ const nextConfig = {
     ],
   },
   env: {
+    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || 'https://www.humacollection.in',
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1',
     NEXT_PUBLIC_STORE_NAME: process.env.NEXT_PUBLIC_STORE_NAME || 'Huma Hijab Collection',
     NEXT_PUBLIC_OWNER_NAME: process.env.NEXT_PUBLIC_OWNER_NAME || 'Hamid Shaikh',

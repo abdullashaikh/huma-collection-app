@@ -3,7 +3,7 @@ import { FALLBACK_CATEGORIES, FALLBACK_PRODUCTS } from '../lib/fallback-data';
 import { Category, Product } from '../types';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://humahijabcollection.com';
+  const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.humacollection.in').replace(/\/+$/, '');
   const now = new Date();
 
   // 1. Fetch live categories & products from API, or use fallback
@@ -37,7 +37,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Graceful fallback during static build without crashing
   }
 
-  // 2. Static High-Priority Core Landing Pages
+  // 2. Static High-Priority Core Landing Pages (Canonical clean URLs)
   const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: `${baseUrl}`,
@@ -57,34 +57,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'daily',
       priority: 0.9,
     },
-    {
-      url: `${baseUrl}/collection?audience=WOMEN`,
-      lastModified: now,
-      changeFrequency: 'daily',
-      priority: 0.85,
-    },
-    {
-      url: `${baseUrl}/collection?audience=MEN`,
-      lastModified: now,
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/collection?audience=ALL`,
-      lastModified: now,
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    },
   ];
 
-  // 3. Dynamic Category Landing Pages
+  // 3. Dynamic Category Landing Pages (excluding dedicated /burqa route to avoid duplicates)
   const categoryRoutes: MetadataRoute.Sitemap = categories
-    .filter((cat) => cat.isActive !== false)
+    .filter((cat) => cat.isActive !== false && cat.slug !== 'burqa')
     .map((cat) => ({
       url: `${baseUrl}/category/${cat.slug}`,
       lastModified: now,
       changeFrequency: 'weekly' as const,
-      priority: cat.slug === 'burqa' ? 0.95 : 0.85,
+      priority: 0.85,
     }));
 
   // 4. Dynamic Product Detail Pages

@@ -15,6 +15,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . ./
 
 # Accept build-time public environment variables
+ARG NEXT_PUBLIC_SITE_URL
 ARG NEXT_PUBLIC_API_URL
 ARG NEXT_PUBLIC_STORE_NAME
 ARG NEXT_PUBLIC_STORE_PHONE

@@ -122,7 +122,7 @@ export const FALLBACK_PRODUCTS: Product[] = [
     status: 'ACTIVE',
     seoTitle: 'Royal Black Dubai Crepe Front Open Burqa | Huma Hijab Collection',
     seoDescription: 'Buy Royal Black Dubai Crepe Front Open Burqa online. Premium modest modest-wear crafted with Korean crepe and matching scarf.',
-    canonicalUrl: 'https://humahijabcollection.com/burqa/royal-black-dubai-crepe-front-open-burqa',
+    canonicalUrl: 'https://www.humacollection.in/burqa/royal-black-dubai-crepe-front-open-burqa',
     primary_image_url: 'https://images.unsplash.com/photo-1584282479901-705a6104bc99?auto=format&fit=crop&w=1200&q=85',
     secondary_image_url: 'https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?auto=format&fit=crop&w=1200&q=85',
     views: {
@@ -166,7 +166,7 @@ export const FALLBACK_PRODUCTS: Product[] = [
     status: 'ACTIVE',
     seoTitle: 'Emirati Hand-Embroidered Butterfly Burqa | Huma Hijab Collection',
     seoDescription: 'Exquisite hand-embroidered butterfly burqa with golden zari threadwork in breathable Nida matte.',
-    canonicalUrl: 'https://humahijabcollection.com/burqa/emirati-hand-embroidered-butterfly-flare-burqa',
+    canonicalUrl: 'https://www.humacollection.in/burqa/emirati-hand-embroidered-butterfly-flare-burqa',
     primary_image_url: 'https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?auto=format&fit=crop&w=1200&q=85',
     secondary_image_url: 'https://images.unsplash.com/photo-1584282479901-705a6104bc99?auto=format&fit=crop&w=1200&q=85',
     images: [
@@ -201,7 +201,7 @@ export const FALLBACK_PRODUCTS: Product[] = [
     status: 'ACTIVE',
     seoTitle: 'Luxury Nida Matte 360 Umbrella Cut Burqa | Huma Hijab Collection',
     seoDescription: 'Buy premium umbrella flare burqa with wudu-friendly stretch cuffs and interactive 360 viewer.',
-    canonicalUrl: 'https://humahijabcollection.com/burqa/luxury-nida-matte-umbrella-cut-burqa',
+    canonicalUrl: 'https://www.humacollection.in/burqa/luxury-nida-matte-umbrella-cut-burqa',
     is_360: true,
     images_360: [
       'https://images.unsplash.com/photo-1590736969955-71cc94801759?auto=format&fit=crop&w=1200&q=85',
@@ -249,7 +249,7 @@ export const FALLBACK_PRODUCTS: Product[] = [
     status: 'ACTIVE',
     seoTitle: 'Imperial Maroon Velvet Bordered Burqa | Huma Hijab Collection',
     seoDescription: 'Shop luxury maroon burqa with plush velvet accents and crystal details.',
-    canonicalUrl: 'https://humahijabcollection.com/burqa/imperial-maroon-velvet-bordered-crepe-burqa',
+    canonicalUrl: 'https://www.humacollection.in/burqa/imperial-maroon-velvet-bordered-crepe-burqa',
     primary_image_url: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=1200&q=85',
     secondary_image_url: 'https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?auto=format&fit=crop&w=1200&q=85',
     images: [

@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description:
     'Explore our signature modest burqas. Luxury Korean Crepe front-open, Emirati butterfly flare, and 360-degree umbrella cuts designed with modest proportions.',
   alternates: {
-    canonical: 'https://humahijabcollection.com/burqa',
+    canonical: 'https://www.humacollection.in/burqa',
   },
 };
 
@@ -90,13 +90,13 @@ export default async function BurqaCategoryPage({ searchParams }: BurqaPageProps
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: 'https://humahijabcollection.com',
+        item: 'https://www.humacollection.in',
       },
       {
         '@type': 'ListItem',
         position: 2,
         name: 'Burqa Collection',
-        item: 'https://humahijabcollection.com/burqa',
+        item: 'https://www.humacollection.in/burqa',
       },
     ],
   };
@@ -106,7 +106,7 @@ export default async function BurqaCategoryPage({ searchParams }: BurqaPageProps
     '@type': 'CollectionPage',
     name: 'Designer Burqa Collection | Huma Hijab Collection',
     description: 'Explore our signature modest burqas. Luxury Korean Crepe front-open, Emirati butterfly flare, and 360-degree umbrella cuts designed with modest proportions.',
-    url: 'https://humahijabcollection.com/burqa',
+    url: 'https://www.humacollection.in/burqa',
   };
 
   return (

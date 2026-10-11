@@ -51,7 +51,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: category.seoTitle || `${category.name} | Huma Hijab Collection`,
     description: category.seoDescription || category.description || 'Shop modest collection.',
     alternates: {
-      canonical: `https://humahijabcollection.com/category/${category.slug}`,
+      canonical: `https://www.humacollection.in/category/${category.slug}`,
     },
   };
 }
@@ -73,13 +73,13 @@ export default async function CategoryPage({ params }: Props) {
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: 'https://humahijabcollection.com',
+        item: 'https://www.humacollection.in',
       },
       {
         '@type': 'ListItem',
         position: 2,
         name: category.name,
-        item: `https://humahijabcollection.com/category/${category.slug}`,
+        item: `https://www.humacollection.in/category/${category.slug}`,
       },
     ],
   };
@@ -89,7 +89,7 @@ export default async function CategoryPage({ params }: Props) {
     '@type': 'CollectionPage',
     name: `${category.name} | Huma Hijab Collection`,
     description: category.description || `Shop premium ${category.name} at Huma Hijab Collection`,
-    url: `https://humahijabcollection.com/category/${category.slug}`,
+    url: `https://www.humacollection.in/category/${category.slug}`,
   };
 
   return (

@@ -155,7 +155,7 @@ export default function CheckoutPage() {
           prefill: {
             name: customerName,
             contact: customerPhone,
-            email: customerEmail || 'customer@humahijabcollection.com',
+            email: customerEmail || 'customer@humacollection.in',
           },
           theme: {
             color: '#1C1B1A',

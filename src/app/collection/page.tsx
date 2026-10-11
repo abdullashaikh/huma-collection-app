@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description:
     'Explore our complete catalogue of luxury burqas, breathable hijabs, artisanal non-alcoholic attars, men\'s prayer caps, and Hajj & Umrah travel essentials.',
   alternates: {
-    canonical: 'https://humahijabcollection.com/collection',
+    canonical: 'https://www.humacollection.in/collection',
   },
 };
 
@@ -49,7 +49,7 @@ export default async function CollectionPage() {
     name: 'Boutique Modest Collection | Huma Hijab Collection',
     description:
       'Complete catalogue of luxury burqas, designer abayas, breathable hijabs, non-alcoholic attars, and pilgrimage essentials.',
-    url: 'https://humahijabcollection.com/collection',
+    url: 'https://www.humacollection.in/collection',
   };
 
   return (
