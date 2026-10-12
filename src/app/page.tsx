@@ -4,7 +4,6 @@ import { ProductCard } from '../components/product/ProductCard';
 import { HeroSection } from '../components/home/HeroSection';
 import { OnlineShoppingComingSoon } from '../components/home/OnlineShoppingComingSoon';
 import { MarqueeBanner } from '../components/home/MarqueeBanner';
-import { CategoryShowcase } from '../components/home/CategoryShowcase';
 import { BrandCraftsmanshipSection } from '../components/home/BrandCraftsmanshipSection';
 import { InstagramReelsGallery } from '../components/home/InstagramReelsGallery';
 import { StoreVisitSection } from '../components/home/StoreVisitSection';
@@ -119,8 +118,6 @@ export default async function HomePage() {
       {/* 3. Luxury Continuous Marquee Ribbon */}
       <MarqueeBanner />
 
-      {/* 4. Curated Category Showcase (Architectural Arches & Motion) */}
-      <CategoryShowcase categories={categories} />
 
       {/* 5. PRIMARY FLAGSHIP SHOWCASE */}
       <SectionReveal id="collection" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
