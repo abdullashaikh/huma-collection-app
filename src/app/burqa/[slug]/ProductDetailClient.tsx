@@ -31,6 +31,7 @@ import { fetchApi } from '../../../lib/api';
 import { useCart } from '../../../lib/cart-context';
 import { ProductItem } from '../../../types';
 import { getMediaUrl } from '../../../lib/media';
+import { WhatsAppIcon, buildProductWhatsAppUrl, openWhatsApp, STORE_OWNER_NAME } from '../../../lib/whatsapp';
 
 export function ProductDetailClient({ product }: { product: ProductItem }) {
   const router = useRouter();
@@ -143,12 +144,28 @@ export function ProductDetailClient({ product }: { product: ProductItem }) {
     }
   };
 
-  const whatsappMessage = encodeURIComponent(
-    `Assalamu Alaikum Hamid bhai (Huma Hijab Collection),\n\nI am viewing this piece in your online showcase and would like to inquire about visiting or checking in-store availability:\n*${product.name}*\nSKU: ${selectedVariant?.sku || product.skuBase}\nEstimated Price: ₹${currentPrice}\n\nCould you please help confirm availability at the store?`
-  );
+  const selectedSizeLabel =
+    selectedVariant?.attributes?.size ||
+    selectedVariant?.size_value ||
+    (selectedVariant?.sku ? selectedVariant.sku.split('-')[3] : undefined);
+
+  const whatsappOrderUrl = useMemo(() => {
+    return buildProductWhatsAppUrl({
+      name: product.name,
+      slug: product.slug,
+      sku: selectedVariant?.sku || product.skuBase,
+      price: currentPrice,
+      size: selectedSizeLabel,
+      color: product.colors?.[0] || undefined,
+    });
+  }, [product, selectedVariant, currentPrice, selectedSizeLabel]);
+
+  const handleOrderOnWhatsApp = () => {
+    openWhatsApp(whatsappOrderUrl);
+  };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-16">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 pb-28 lg:pb-12 space-y-16">
       {/* Dynamic Breadcrumbs */}
       <nav className="flex items-center gap-1.5 text-xs text-stone-500 overflow-x-auto whitespace-nowrap">
         <Link href="/" className="hover:text-brand-obsidian">Home</Link>
@@ -304,50 +321,60 @@ export function ProductDetailClient({ product }: { product: ProductItem }) {
             </div>
           )}
 
-          {/* Online Shopping Coming Soon Notice */}
-          <div className="p-4 rounded-2xl bg-brand-gold/15 border border-brand-gold/40 text-brand-obsidian space-y-1.5">
+          {/* Order Method Notice */}
+          <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-50 to-teal-50/50 border border-emerald-200/80 text-emerald-950 space-y-1.5 shadow-sm">
             <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4 text-brand-gold-dark" />
-              <span className="font-serif font-bold text-xs uppercase tracking-wider text-brand-gold-dark">
-                Product Showcase Mode • Online Store Nov 2026
+              <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="font-serif font-bold text-xs uppercase tracking-wider text-emerald-900">
+                Direct WhatsApp Ordering Active
               </span>
             </div>
-            <p className="text-xs text-stone-700 leading-relaxed">
-              Explore this piece in-store today. Online shopping &amp; nationwide delivery will launch in November 2026. Please call or visit our boutique for immediate availability and custom fittings.
+            <p className="text-xs text-emerald-800 leading-relaxed">
+              We currently accept all orders and styling inquiries directly via <strong>WhatsApp</strong> and in-person at our Ahmedabad boutique. Tap below to chat with {STORE_OWNER_NAME} for instant size guidance, payment, and fast shipping!
             </p>
           </div>
 
-          {/* Action CTAs: Call Store & Inquire */}
+          {/* Action CTAs: Primary WhatsApp Button + Secondary Call & Maps */}
           <div className="space-y-3 pt-2">
+            {/* High-Converting WhatsApp Order CTA */}
+            <button
+              type="button"
+              onClick={handleOrderOnWhatsApp}
+              className="w-full py-4 px-6 rounded-2xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-sm sm:text-base flex items-center justify-center gap-3 shadow-lg shadow-[#25D366]/25 hover:shadow-xl hover:shadow-[#25D366]/30 transition-all duration-300 active:scale-[0.98] group"
+            >
+              <WhatsAppIcon className="w-6 h-6 text-white fill-white transition-transform group-hover:scale-110 flex-shrink-0" />
+              <div className="text-left flex-1 min-w-0">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="truncate">Order / Inquire on WhatsApp</span>
+                  <span className="text-[10px] bg-white/20 text-white px-2 py-0.5 rounded-full uppercase tracking-wider font-semibold flex-shrink-0">
+                    Instant Chat
+                  </span>
+                </div>
+                <p className="text-[11px] font-normal text-white/90 truncate">
+                  {selectedSizeLabel ? `Selected Size: ${selectedSizeLabel} • ` : ''}Chat with {STORE_OWNER_NAME}
+                </p>
+              </div>
+            </button>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <a
                 href={`tel:+91${phone}`}
-                className="py-4 px-5 rounded-xl bg-brand-obsidian hover:bg-stone-900 text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-2.5 shadow-luxury transition-all active:scale-95"
+                className="py-3.5 px-4 rounded-xl bg-brand-obsidian hover:bg-stone-900 text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm transition-all active:scale-95"
               >
                 <Phone className="w-4 h-4 text-brand-gold" />
-                <span>Call Store ({phone})</span>
+                <span>Call Boutique (+91 {phone})</span>
               </a>
 
               <a
-                href={`https://wa.me/91${phone.replace(/[^0-9]/g, '')}?text=${whatsappMessage}`}
+                href={mapsUrl}
                 target="_blank"
-                rel="noreferrer"
-                className="py-4 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md transition-all active:scale-95"
+                rel="noopener noreferrer"
+                className="py-3.5 px-4 rounded-xl bg-brand-ivory hover:bg-brand-sand border border-brand-gold/40 text-brand-obsidian font-bold text-xs flex items-center justify-center gap-2 transition-all active:scale-95 shadow-sm"
               >
-                <MessageCircle className="w-4 h-4 fill-white" />
-                <span>Inquire on WhatsApp</span>
+                <MapPin className="w-4 h-4 text-brand-gold-dark" />
+                <span>Get Directions (Google Maps)</span>
               </a>
             </div>
-
-            <a
-              href={mapsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full py-3.5 px-5 rounded-xl bg-brand-ivory hover:bg-brand-sand border border-brand-gold/40 text-brand-obsidian font-bold text-xs flex items-center justify-center gap-2 transition-all active:scale-95 shadow-sm"
-            >
-              <MapPin className="w-4 h-4 text-brand-gold-dark" />
-              <span>Get Directions to Boutique (Google Maps)</span>
-            </a>
 
             {/* Share link */}
             <div className="flex justify-end pt-1">
@@ -461,11 +488,11 @@ export function ProductDetailClient({ product }: { product: ProductItem }) {
         </section>
       )}
 
-      {/* Sticky Bottom Bar on Mobile Devices (Replaces general bottom nav on PDP) */}
-      <div className="fixed bottom-0 inset-x-0 z-50 lg:hidden bg-white/95 backdrop-blur-md border-t border-stone-200 px-4 py-2.5 pb-[calc(0.6rem+env(safe-area-inset-bottom,0px))] shadow-[0_-8px_25px_rgba(0,0,0,0.08)] flex items-center justify-between gap-2.5">
-        <div className="flex flex-col min-w-0 pr-1">
+      {/* Sticky Bottom Bar on Mobile Devices (Direct WhatsApp Order Action) */}
+      <div className="fixed bottom-0 inset-x-0 z-50 lg:hidden bg-white/95 backdrop-blur-md border-t border-stone-200 px-3.5 py-2.5 pb-[calc(0.6rem+env(safe-area-inset-bottom,0px))] shadow-[0_-8px_25px_rgba(0,0,0,0.12)] flex items-center justify-between gap-3">
+        <div className="flex flex-col min-w-0 pr-1 flex-shrink-0">
           <span className="text-[10px] text-stone-500 font-semibold uppercase tracking-wider block truncate">
-            {selectedVariant?.size_value ? `Size: ${selectedVariant.size_value.split(' ')[0]}` : 'Price'}
+            {selectedSizeLabel ? `Size: ${selectedSizeLabel}` : 'Price'}
           </span>
           <span className="font-bold text-base text-brand-obsidian leading-tight">
             ₹{currentPrice.toLocaleString('en-IN')}
@@ -473,26 +500,26 @@ export function ProductDetailClient({ product }: { product: ProductItem }) {
         </div>
 
         <div className="flex items-center gap-2 flex-1 justify-end">
-          {/* Quick WhatsApp Inquiry for this piece */}
+          {/* Quick Call icon button */}
           <a
-            href={`https://wa.me/${phone.replace(/[^0-9]/g, '')}?text=${whatsappMessage}`}
-            target="_blank"
-            rel="noreferrer"
-            className="w-11 h-11 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white flex items-center justify-center flex-shrink-0 shadow-sm active:scale-95 transition-all"
-            title="Inquire about this piece on WhatsApp"
-            aria-label="WhatsApp Inquiry"
+            href={`tel:+91${phone}`}
+            className="w-11 h-11 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-800 flex items-center justify-center flex-shrink-0 shadow-sm active:scale-95 transition-all border border-stone-200"
+            title="Call Boutique"
+            aria-label="Call Store"
           >
-            <MessageCircle className="w-5 h-5 fill-white" />
+            <Phone className="w-4 h-4 text-brand-gold-dark" />
           </a>
 
-          {/* Add to Bag CTA */}
+          {/* Primary Mobile WhatsApp Order Button */}
           <button
-            onClick={handleAddToCart}
-            disabled={isCartLoading || !selectedVariant || selectedVariant.stockQuantity <= 0}
-            className="flex-1 max-w-[200px] py-3 px-3 rounded-xl bg-brand-obsidian hover:bg-stone-900 text-white font-bold text-xs shadow-md flex items-center justify-center gap-1.5 active:scale-95 transition-all disabled:opacity-50"
+            type="button"
+            onClick={handleOrderOnWhatsApp}
+            className="flex-1 py-3 px-3.5 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 active:scale-95 transition-all"
+            title="Order this piece on WhatsApp"
+            aria-label="Order on WhatsApp"
           >
-            <ShoppingBag className="w-4 h-4 text-brand-gold" />
-            <span>Add to Bag</span>
+            <WhatsAppIcon className="w-4 h-4 text-white fill-white flex-shrink-0" />
+            <span className="truncate">Order on WhatsApp</span>
           </button>
         </div>
       </div>

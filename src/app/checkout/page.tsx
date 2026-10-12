@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { fetchApi, getSessionId } from '../../lib/api';
 import { useCart } from '../../lib/cart-context';
 import { getMediaUrl } from '../../lib/media';
+import { WhatsAppIcon, buildCartWhatsAppUrl } from '../../lib/whatsapp';
 
 declare global {
   interface Window {
@@ -68,6 +69,16 @@ export default function CheckoutPage() {
   const shippingCharge = subtotal >= 1499 || subtotal === 0 ? 0 : 99;
   const codCharge = paymentMethod === 'COD' ? 50 : 0;
   const totalAmount = Math.max(0, subtotal - discountAmount + shippingCharge + codCharge);
+
+  const whatsappCartUrl = buildCartWhatsAppUrl(
+    items.map((i) => ({
+      productName: i.productName,
+      quantity: i.quantity,
+      attributes: i.attributes,
+      subtotal: i.subtotal,
+    })),
+    subtotal
+  );
 
   const handleApplyCoupon = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -250,33 +261,51 @@ export default function CheckoutPage() {
             </div>
           </div>
 
-          {/* Action CTAs */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
-            <a
-              href={`tel:+91${storePhone}`}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-brand-obsidian text-brand-gold-light hover:bg-black font-semibold text-xs tracking-wide shadow-md transition-all active:scale-95"
-            >
-              <Phone className="w-4 h-4 text-brand-gold" />
-              <span>Call Store ({storePhone})</span>
-            </a>
+          {/* Action CTAs: WhatsApp Primary + Call & Maps */}
+          <div className="space-y-3 pt-4">
+            <div className="flex justify-center">
+              <a
+                href={whatsappCartUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-sm tracking-wide shadow-lg shadow-[#25D366]/25 transition-all active:scale-95 group"
+              >
+                <WhatsAppIcon className="w-5 h-5 text-white fill-white transition-transform group-hover:scale-110" />
+                <span>
+                  {items.length > 0
+                    ? `Order Your Bag on WhatsApp (${items.length} items • ₹${subtotal.toLocaleString('en-IN')})`
+                    : 'Order & Inquire via WhatsApp'}
+                </span>
+              </a>
+            </div>
 
-            <a
-              href={mapsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-stone-100 text-stone-800 hover:bg-stone-200 font-semibold text-xs tracking-wide border border-stone-300 transition-all active:scale-95"
-            >
-              <MapPin className="w-4 h-4 text-brand-gold-dark" />
-              <span>Get Directions (Google Maps)</span>
-            </a>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <a
+                href={`tel:+91${storePhone}`}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-brand-obsidian text-brand-gold-light hover:bg-black font-semibold text-xs tracking-wide shadow-md transition-all active:scale-95"
+              >
+                <Phone className="w-4 h-4 text-brand-gold" />
+                <span>Call Store ({storePhone})</span>
+              </a>
 
-            <Link
-              href="/burqa"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white text-stone-700 hover:text-brand-obsidian font-semibold text-xs tracking-wide border border-stone-200 transition-all active:scale-95"
-            >
-              <span>Explore Collection</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
+              <a
+                href={mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-stone-100 text-stone-800 hover:bg-stone-200 font-semibold text-xs tracking-wide border border-stone-300 transition-all active:scale-95"
+              >
+                <MapPin className="w-4 h-4 text-brand-gold-dark" />
+                <span>Get Directions (Google Maps)</span>
+              </a>
+
+              <Link
+                href="/collection"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white text-stone-700 hover:text-brand-obsidian font-semibold text-xs tracking-wide border border-stone-200 transition-all active:scale-95"
+              >
+                <span>Explore Catalog</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
           </div>
         </div>
       </div>

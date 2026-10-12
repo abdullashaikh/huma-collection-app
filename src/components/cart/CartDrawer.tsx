@@ -6,6 +6,7 @@ import Link from 'next/link';
 import React, { useEffect } from 'react';
 import { useCart } from '../../lib/cart-context';
 import { getMediaUrl } from '../../lib/media';
+import { WhatsAppIcon, buildCartWhatsAppUrl } from '../../lib/whatsapp';
 
 export function CartDrawer() {
   const { cart, isDrawerOpen, closeDrawer, updateQuantity, removeItem, isLoading } = useCart();
@@ -27,14 +28,18 @@ export function CartDrawer() {
   const subtotal = cart?.subtotal || 0;
   const storePhone = process.env.NEXT_PUBLIC_STORE_PHONE || '8200617009';
   const mapsUrl = process.env.NEXT_PUBLIC_MAPS_URL || 'https://maps.app.goo.gl/Uocg3MLVbusi17NG6';
-  const whatsappNum = (process.env.NEXT_PUBLIC_WHATSAPP || '+918200617009').replace(/[^0-9]/g, '');
   const ownerName = process.env.NEXT_PUBLIC_OWNER_NAME || 'Hamid Shaikh';
   const launchDate = process.env.NEXT_PUBLIC_ONLINE_LAUNCH_DATE || 'November 2026';
 
-  const itemNames = items.map((i) => `${i.productName} (x${i.quantity})`).join(', ');
-  const whatsappInquiryUrl = `https://wa.me/${whatsappNum}?text=${encodeURIComponent(
-    `Assalamu Alaikum Hamid bhai, I am interested in these pieces from Huma Hijab Collection: ${itemNames || 'your collection'}. Please let me know availability in-store.`
-  )}`;
+  const whatsappOrderUrl = buildCartWhatsAppUrl(
+    items.map((i) => ({
+      productName: i.productName,
+      quantity: i.quantity,
+      attributes: i.attributes,
+      subtotal: i.subtotal,
+    })),
+    subtotal
+  );
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">
@@ -206,10 +211,20 @@ export function CartDrawer() {
               </div>
 
               {/* Showcase Action Buttons */}
-              <div className="space-y-2">
+              <div className="space-y-2.5">
+                <a
+                  href={whatsappOrderUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-4 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center space-x-2 shadow-lg shadow-[#25D366]/25 active:scale-95 group"
+                >
+                  <WhatsAppIcon className="w-5 h-5 text-white fill-white transition-transform group-hover:scale-110" />
+                  <span>Order Entire Bag via WhatsApp ({items.length} items)</span>
+                </a>
+
                 <a
                   href={`tel:+91${storePhone}`}
-                  className="w-full py-3.5 bg-brand-obsidian text-brand-gold-light rounded-xl text-xs font-bold hover:bg-black transition-all flex items-center justify-center space-x-2 shadow-md active:scale-95"
+                  className="w-full py-3 bg-brand-obsidian text-brand-gold-light rounded-xl text-xs font-semibold hover:bg-black transition-all flex items-center justify-center space-x-2 shadow-sm active:scale-95"
                 >
                   <Phone className="w-4 h-4 text-brand-gold" />
                   <span>Call Store for Piece Availability ({storePhone})</span>
@@ -219,20 +234,10 @@ export function CartDrawer() {
                   href={mapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full py-3 bg-stone-100 text-stone-800 hover:bg-stone-200 rounded-xl text-xs font-semibold transition-all flex items-center justify-center space-x-2 border border-stone-200 active:scale-95"
+                  className="w-full py-2.5 bg-stone-100 text-stone-700 hover:bg-stone-200 rounded-xl text-xs font-medium transition-all flex items-center justify-center space-x-2 border border-stone-200 active:scale-95"
                 >
-                  <MapPin className="w-4 h-4 text-brand-gold-dark" />
-                  <span>Get Directions to Boutique (Google Maps)</span>
-                </a>
-
-                <a
-                  href={whatsappInquiryUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full py-3 bg-emerald-600 text-white hover:bg-emerald-500 rounded-xl text-xs font-semibold transition-all flex items-center justify-center space-x-2 shadow-sm active:scale-95"
-                >
-                  <MessageCircle className="w-4 h-4 fill-white" />
-                  <span>Inquire via WhatsApp with Hamid Shaikh</span>
+                  <MapPin className="w-3.5 h-3.5 text-brand-gold-dark" />
+                  <span>Boutique Directions (Google Maps)</span>
                 </a>
               </div>
             </div>

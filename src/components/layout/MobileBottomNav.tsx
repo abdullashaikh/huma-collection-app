@@ -1,9 +1,10 @@
 'use client';
 
-import { Home, Layers, MessageCircle, Phone, ShoppingBag } from 'lucide-react';
+import { Home, Layers, Phone, ShoppingBag } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCart } from '../../lib/cart-context';
+import { WhatsAppIcon } from '../../lib/whatsapp';
 
 export function MobileBottomNav() {
   const pathname = usePathname();
@@ -15,8 +16,9 @@ export function MobileBottomNav() {
 
   const phone = process.env.NEXT_PUBLIC_STORE_PHONE || '8200617009';
   const whatsappNum = (process.env.NEXT_PUBLIC_WHATSAPP || '+918200617009').replace(/[^0-9]/g, '');
-  const whatsappUrl = `https://wa.me/${whatsappNum}?text=${encodeURIComponent(
-    'Assalamu Alaikum Hamid bhai, I would like to inquire about Huma Hijab Collection boutique pieces.'
+  const cleanWhatsapp = whatsappNum.startsWith('91') ? whatsappNum : `91${whatsappNum}`;
+  const whatsappUrl = `https://wa.me/${cleanWhatsapp}?text=${encodeURIComponent(
+    'Assalamu Alaikum Hamid bhai, I would like to inquire about ordering Huma Hijab Collection boutique pieces.'
   )}`;
 
   return (
@@ -52,13 +54,13 @@ export function MobileBottomNav() {
           href={whatsappUrl}
           target="_blank"
           rel="noreferrer"
-          className="flex flex-col items-center py-1 px-2 text-[10px] font-semibold text-emerald-600 min-w-[56px] min-h-[44px] justify-center"
-          title="Direct WhatsApp Inquiry with Hamid Shaikh"
+          className="flex flex-col items-center py-1 px-2 text-[10px] font-semibold text-[#25D366] min-w-[56px] min-h-[44px] justify-center"
+          title="Direct WhatsApp Order & Inquiry with Hamid Shaikh"
         >
-          <div className="w-11 h-11 -mt-5 rounded-full bg-emerald-600 text-white flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-transform border-2 border-white">
-            <MessageCircle className="w-5 h-5 fill-white" />
+          <div className="w-11 h-11 -mt-5 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-transform border-2 border-white">
+            <WhatsAppIcon className="w-6 h-6 text-white fill-white" />
           </div>
-          <span className="mt-0.5">WhatsApp</span>
+          <span className="mt-0.5 font-bold">WhatsApp</span>
         </a>
 
         {/* 4. Inquiry Bag / Cart with Live Badge */}

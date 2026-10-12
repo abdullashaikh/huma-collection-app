@@ -8,6 +8,7 @@ import { useCart } from '../../lib/cart-context';
 import { Product } from '../../types';
 import { InteractiveProductViewer } from './InteractiveProductViewer';
 import { getMediaUrl } from '../../lib/media';
+import { WhatsAppIcon, buildProductWhatsAppUrl, openWhatsApp } from '../../lib/whatsapp';
 
 interface ProductCardProps {
   product: Product;
@@ -98,15 +99,20 @@ export function ProductCard({ product }: ProductCardProps) {
   const skuCode = product.skuBase || (product as any).sku_base || '';
   const shortDesc = product.shortDescription || (product as any).short_description || '';
 
-  // WhatsApp Pre-filled message generator
-  const getWhatsAppLink = (e: React.MouseEvent) => {
+  // WhatsApp Pre-filled order/inquiry generator
+  const handleWhatsAppClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const phone = process.env.NEXT_PUBLIC_WHATSAPP || '+919876543210';
-    const message = encodeURIComponent(
-      `Assalamu Alaikum, I would like to inquire about this product:\n\n*${product.name}*\nSKU: ${skuCode}\nPrice: ₹${displayPrice}\n\nCould you please help me with availability and sizing?`
-    );
-    window.open(`https://wa.me/${phone.replace(/[^0-9]/g, '')}?text=${message}`, '_blank');
+    const selectedVariant = product.variants?.find((v) => v.id === selectedVariantId);
+    const sizeLabel = selectedVariant?.size_value ? selectedVariant.size_value.split(' ')[0] : undefined;
+    const url = buildProductWhatsAppUrl({
+      name: product.name,
+      slug: product.slug,
+      sku: selectedVariant?.sku || skuCode,
+      price: displayPrice,
+      size: sizeLabel,
+    });
+    openWhatsApp(url);
   };
 
   const discountPercent =
@@ -232,35 +238,49 @@ export function ProductCard({ product }: ProductCardProps) {
           )}
         </div>
 
-        {/* Pricing & Primary CTA with accessible touch target */}
-        <div className="pt-2.5 sm:pt-3 mt-2.5 sm:mt-3 border-t border-stone-100 flex items-center justify-between gap-1.5 sm:gap-2">
-          <div className="flex flex-col min-w-0">
-            <div className="flex items-baseline gap-1 sm:gap-1.5">
-              <span className="font-bold text-sm sm:text-base text-brand-obsidian">
-                ₹{displayPrice.toLocaleString('en-IN')}
-              </span>
-              {salePrice && basePrice > salePrice && (
-                <span className="text-[10px] sm:text-xs text-stone-400 line-through truncate">
-                  ₹{basePrice.toLocaleString('en-IN')}
+        {/* Pricing & Primary CTAs */}
+        <div className="pt-2.5 sm:pt-3 mt-2.5 sm:mt-3 border-t border-stone-100 flex flex-col gap-2">
+          <div className="flex items-center justify-between gap-1.5 sm:gap-2">
+            <div className="flex flex-col min-w-0">
+              <div className="flex items-baseline gap-1 sm:gap-1.5">
+                <span className="font-bold text-sm sm:text-base text-brand-obsidian">
+                  ₹{displayPrice.toLocaleString('en-IN')}
+                </span>
+                {salePrice && basePrice > salePrice && (
+                  <span className="text-[10px] sm:text-xs text-stone-400 line-through truncate">
+                    ₹{basePrice.toLocaleString('en-IN')}
+                  </span>
+                )}
+              </div>
+              {discountPercent && (
+                <span className="text-[10px] sm:text-[11px] font-bold text-red-600">
+                  {discountPercent}% OFF
                 </span>
               )}
             </div>
-            {discountPercent && (
-              <span className="text-[10px] sm:text-[11px] font-bold text-red-600">
-                {discountPercent}% OFF
-              </span>
-            )}
+
+            <Link
+              href={productHref}
+              className="min-h-[32px] sm:min-h-[36px] px-2.5 sm:px-3 py-1 rounded-lg text-[11px] sm:text-xs font-semibold flex items-center gap-1 bg-stone-100 hover:bg-stone-200 text-stone-700 hover:text-brand-obsidian transition-colors flex-shrink-0"
+              title="View Piece Details"
+              aria-label={`View details for ${product.name}`}
+            >
+              <span>Details</span>
+              <ArrowRight className="w-3 h-3 text-stone-500" />
+            </Link>
           </div>
 
-          <Link
-            href={productHref}
-            className="min-h-[38px] sm:min-h-[44px] px-2.5 sm:px-4 py-1.5 sm:py-2.5 rounded-xl text-[11px] sm:text-xs font-bold flex items-center gap-1 sm:gap-1.5 bg-brand-obsidian text-white hover:bg-stone-800 transition-all shadow-sm active:scale-95 group/btn flex-shrink-0"
-            title="Explore Piece"
-            aria-label={`Explore ${product.name}`}
+          {/* Dedicated WhatsApp Inquiry & Order Button */}
+          <button
+            type="button"
+            onClick={handleWhatsAppClick}
+            className="w-full min-h-[38px] sm:min-h-[40px] px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white shadow-sm hover:shadow transition-all active:scale-[0.98] group/wa"
+            title="Inquire & Order on WhatsApp"
+            aria-label={`Order ${product.name} on WhatsApp`}
           >
-            <span>View<span className="hidden sm:inline"> Piece</span></span>
-            <ArrowRight className="w-3.5 h-3.5 text-brand-gold-light group-hover/btn:translate-x-0.5 transition-transform" />
-          </Link>
+            <WhatsAppIcon className="w-4 h-4 text-white fill-white transition-transform group-hover/wa:scale-110" />
+            <span>Order on WhatsApp</span>
+          </button>
         </div>
       </div>
     </div>
