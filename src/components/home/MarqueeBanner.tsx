@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import { Sparkles, Shield, Heart, Truck, Gift } from 'lucide-react';
 

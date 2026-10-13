@@ -1,7 +1,8 @@
 import { MetadataRoute } from 'next';
+import { SITE_CONFIG } from '../lib/seo';
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.humacollection.in').replace(/\/+$/, '');
+  const baseUrl = SITE_CONFIG.siteUrl;
 
   return {
     rules: [
@@ -11,6 +12,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: [
           '/checkout',
           '/order-confirmation/',
+          '/track-order',
           '/api/',
         ],
       },
@@ -20,12 +22,21 @@ export default function robots(): MetadataRoute.Robots {
         disallow: [
           '/checkout',
           '/order-confirmation/',
+          '/track-order',
           '/api/',
         ],
       },
       {
         userAgent: 'Googlebot-Image',
-        allow: ['/images/', '/icon.svg', '/*.webp', '/*.jpg', '/*.png'],
+        allow: [
+          '/',
+          '/icon.svg',
+          '/favicon.ico',
+          '/*.webp',
+          '/*.jpg',
+          '/*.png',
+          '/*.svg',
+        ],
       },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,

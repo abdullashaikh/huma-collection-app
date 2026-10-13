@@ -1,8 +1,15 @@
-import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
+import { notFound, redirect } from 'next/navigation';
 import { ProductItem } from '../../../types';
 import { FALLBACK_PRODUCTS } from '../../../lib/fallback-data';
 import { getMediaUrl } from '../../../lib/media';
+import {
+  SITE_CONFIG,
+  absoluteUrl,
+  buildBreadcrumbJsonLd,
+  buildPageMetadata,
+  buildProductJsonLd,
+} from '../../../lib/seo';
 import { ProductDetailClient } from '../../burqa/[slug]/ProductDetailClient';
 
 interface Props {
@@ -30,31 +37,41 @@ async function getProduct(slug: string): Promise<ProductItem | null> {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const product = await getProduct(params.slug);
   if (!product) {
-    return { title: 'Product Not Found | Huma Hijab Collection' };
+    return {
+      title: 'Product Not Found',
+      robots: { index: false, follow: false },
+    };
   }
+
+  // If this product is a burqa, canonical should point to /burqa/[slug]
+  const isBurqa =
+    product.categorySlug === 'burqa' ||
+    (product as any).category_slug === 'burqa' ||
+    product.categoryId === 1 ||
+    (product as any).category_id === 1;
+
+  const path = isBurqa ? `/burqa/${product.slug}` : `/product/${product.slug}`;
 
   const rawPrimaryImage =
     product.images?.find((img) => img.isPrimary)?.s3Url ||
     product.images?.[0]?.s3Url ||
     (product as any).primaryImageUrl ||
     (product as any).primary_image_url ||
-    'https://images.unsplash.com/photo-1584282479901-705a6104bc99?auto=format&fit=crop&w=1200&q=85';
+    SITE_CONFIG.defaultOgImage;
   const primaryImage = getMediaUrl(rawPrimaryImage);
 
-  return {
-    title: product.seoTitle || `${product.name} | Huma Hijab Collection`,
-    description: product.seoDescription || product.shortDescription,
-    alternates: {
-      canonical: product.canonicalUrl || `https://www.humacollection.in/product/${product.slug}`,
-    },
-    openGraph: {
-      title: product.name,
-      description: product.shortDescription,
-      url: `https://www.humacollection.in/product/${product.slug}`,
-      images: [{ url: primaryImage, width: 1200, height: 630, alt: product.name }],
-      type: 'website',
-    },
-  };
+  const title = product.seoTitle || `${product.name} | ${SITE_CONFIG.brandName}`;
+  const description =
+    product.seoDescription ||
+    product.shortDescription ||
+    `Shop ${product.name} crafted with ${product.fabric || 'premium modest fabric'} at ${SITE_CONFIG.brandName}.`;
+
+  return buildPageMetadata({
+    title,
+    description,
+    path,
+    ogImage: primaryImage,
+  });
 }
 
 export default async function ProductDetailPage({ params }: Props) {
@@ -64,79 +81,64 @@ export default async function ProductDetailPage({ params }: Props) {
     notFound();
   }
 
+  // Canonical route enforcement: burqa products live at /burqa/[slug]
+  const isBurqa =
+    product.categorySlug === 'burqa' ||
+    (product as any).category_slug === 'burqa' ||
+    product.categoryId === 1 ||
+    (product as any).category_id === 1;
+
+  if (isBurqa) {
+    redirect(`/burqa/${product.slug}`);
+  }
+
+  const canonicalUrl = absoluteUrl(`/product/${product.slug}`);
+
   const rawPrimaryImage =
     product.images?.find((img) => img.isPrimary)?.s3Url ||
     product.images?.[0]?.s3Url ||
     (product as any).primaryImageUrl ||
     (product as any).primary_image_url ||
-    'https://images.unsplash.com/photo-1584282479901-705a6104bc99?auto=format&fit=crop&w=1200&q=85';
+    SITE_CONFIG.defaultOgImage;
   const primaryImage = getMediaUrl(rawPrimaryImage);
 
-  const jsonLdProduct = {
-    '@context': 'https://schema.org',
-    '@type': 'Product',
-    name: product.name,
-    image: product.images?.map((i) => getMediaUrl(i.s3Url)) || [primaryImage],
-    description: product.shortDescription,
-    sku: product.skuBase,
-    brand: {
-      '@type': 'Brand',
-      name: 'Huma Hijab Collection',
-    },
-    offers: {
-      '@type': 'Offer',
-      url: `https://www.humacollection.in/product/${product.slug}`,
-      priceCurrency: 'INR',
-      price: product.salePrice || product.basePrice || (product as any).sale_price || (product as any).base_price || 0,
-      availability: 'https://schema.org/InStock',
-      itemCondition: 'https://schema.org/NewCondition',
-    },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: product.averageRating || 5,
-      reviewCount: product.reviewCount || 1,
-    },
-  };
+  const allImages =
+    product.images && product.images.length > 0
+      ? product.images.map((i) => getMediaUrl(i.s3Url))
+      : [primaryImage];
+
+  // Google-compliant Product structured data
+  const productJsonLd = buildProductJsonLd(product, canonicalUrl, allImages);
 
   const categoryName = product.categoryName || 'Collection';
   const categorySlug = product.categorySlug || 'collection';
 
-  const breadcrumbList = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      {
-        '@type': 'ListItem',
-        position: 1,
-        name: 'Home',
-        item: 'https://www.humacollection.in',
-      },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: categoryName,
-        item: `https://www.humacollection.in/category/${categorySlug}`,
-      },
-      {
-        '@type': 'ListItem',
-        position: 3,
-        name: product.name,
-        item: `https://www.humacollection.in/product/${product.slug}`,
-      },
-    ],
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: 'Home', path: '/' },
+    { name: categoryName, path: `/category/${categorySlug}` },
+    { name: product.name, path: `/product/${product.slug}` },
+  ]);
+
+  // Ensure related products are populated for rich internal linking
+  const enrichedProduct: ProductItem = {
+    ...product,
+    relatedProducts:
+      product.relatedProducts && product.relatedProducts.length > 0
+        ? product.relatedProducts
+        : FALLBACK_PRODUCTS.filter((p) => p.slug !== product.slug).slice(0, 4),
   };
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdProduct) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbList) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
-      <ProductDetailClient product={product} />
+      <ProductDetailClient product={enrichedProduct} />
     </>
   );
 }

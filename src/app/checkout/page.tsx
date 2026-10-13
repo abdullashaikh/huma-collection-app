@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { fetchApi, getSessionId } from '../../lib/api';
 import { useCart } from '../../lib/cart-context';
 import { getMediaUrl } from '../../lib/media';
+import { loadRazorpay } from '../../lib/razorpay';
 import { WhatsAppIcon, buildCartWhatsAppUrl } from '../../lib/whatsapp';
 
 declare global {
@@ -62,6 +63,13 @@ export default function CheckoutPage() {
       } catch (e) {}
     }
   }, []);
+
+  // On-demand: prefetch Razorpay SDK only when checkout page loads and payment method is RAZORPAY
+  useEffect(() => {
+    if (paymentMethod === 'RAZORPAY') {
+      loadRazorpay().catch(() => {});
+    }
+  }, [paymentMethod]);
 
   const items = cart?.items || [];
   const subtotal = cart?.subtotal || 0;
@@ -153,8 +161,13 @@ export default function CheckoutPage() {
 
       // Handle Online Payment (Razorpay)
       if (paymentMethod === 'RAZORPAY') {
-        if (!window.Razorpay) {
-          throw new Error('Razorpay SDK failed to load. Please check your internet connection.');
+        let isLoaded = Boolean(window.Razorpay);
+        if (!isLoaded) {
+          isLoaded = await loadRazorpay();
+        }
+
+        if (!isLoaded || !window.Razorpay) {
+          throw new Error('Razorpay SDK failed to load. Please check your internet connection and try again.');
         }
 
         const options = {

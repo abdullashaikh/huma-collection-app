@@ -5,11 +5,36 @@ import { FALLBACK_CATEGORIES, FALLBACK_PRODUCTS } from '../../lib/fallback-data'
 import { CollectionClient } from './CollectionClient';
 
 export const metadata: Metadata = {
-  title: 'Boutique Collection & Catalogue | Huma Hijab Collection',
+  title: {
+    absolute: 'All Modest Collections & Catalogue | Huma Collection',
+  },
   description:
-    'Explore our complete catalogue of luxury burqas, breathable hijabs, artisanal non-alcoholic attars, men\'s prayer caps, and Hajj & Umrah travel essentials.',
+    'Explore our complete modest wear catalogue including luxury burqas, designer abayas, breathable hijabs, non-alcoholic attars, and Islamic prayer essentials.',
   alternates: {
     canonical: 'https://www.humacollection.in/collection',
+  },
+  openGraph: {
+    title: 'All Modest Collections & Catalogue | Huma Collection',
+    description:
+      'Explore our complete modest wear catalogue including luxury burqas, designer abayas, breathable hijabs, non-alcoholic attars, and Islamic prayer essentials.',
+    url: 'https://www.humacollection.in/collection',
+    siteName: 'Huma Collection',
+    images: [
+      {
+        url: 'https://images.unsplash.com/photo-1584282479901-705a6104bc99?auto=format&fit=crop&w=1200&q=85',
+        width: 1200,
+        height: 630,
+        alt: 'All Modest Collections — Huma Collection',
+      },
+    ],
+    locale: 'en_IN',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'All Modest Collections & Catalogue | Huma Collection',
+    description:
+      'Explore our complete modest wear catalogue including luxury burqas, designer abayas, breathable hijabs, non-alcoholic attars, and Islamic prayer essentials.',
   },
 };
 
@@ -46,7 +71,7 @@ export default async function CollectionPage() {
   const collectionSchema = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: 'Boutique Modest Collection | Huma Hijab Collection',
+    name: 'All Modest Collections | Huma Collection',
     description:
       'Complete catalogue of luxury burqas, designer abayas, breathable hijabs, non-alcoholic attars, and pilgrimage essentials.',
     url: 'https://www.humacollection.in/collection',

@@ -1,11 +1,12 @@
 import type { Metadata, Viewport } from 'next';
+import { Suspense } from 'react';
 import { Plus_Jakarta_Sans, Playfair_Display } from 'next/font/google';
-import Script from 'next/script';
 import { CartDrawer } from '../components/cart/CartDrawer';
 import { FloatingWhatsApp } from '../components/layout/FloatingWhatsApp';
 import { Footer } from '../components/layout/Footer';
 import { MobileBottomNav } from '../components/layout/MobileBottomNav';
 import { Navbar } from '../components/layout/Navbar';
+import { NavigationProgress } from '../components/layout/NavigationProgress';
 import { CartProvider } from '../lib/cart-context';
 import './globals.css';
 
@@ -19,50 +20,46 @@ export const viewport: Viewport = {
 
 const sansFont = Plus_Jakarta_Sans({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800'],
+  weight: ['400', '500', '600', '700'],
   variable: '--font-sans',
   display: 'swap',
 });
 
 const serifFont = Playfair_Display({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800'],
+  weight: ['600', '700'],
   variable: '--font-serif',
   display: 'swap',
 });
 
 export const metadata: Metadata = {
   title: {
-    default: 'Huma Hijab Collection | Luxury Burqas & Modest Fashion Online',
-    template: '%s | Huma Hijab Collection',
+    default: 'Huma Collection | Hijabs, Abayas, Burqas & Islamic Essentials',
+    template: '%s | Huma Collection',
   },
   description:
-    'Discover signature luxury Burqas, Dubai Abayas, Breathable Hijabs, Saudi Niqabs, Artisanal Non-Alcoholic Attars, and Hajj & Umrah pilgrimage essentials. Hand-tailored with authentic Korean Crepe and Saudi Nida Matte fabrics.',
+    'Discover elegant hijabs, abayas, burqas, niqabs, perfumes, attar and Islamic essentials at Huma Collection. Explore modest fashion and find products that suit your style.',
   keywords: [
-    'Burqa',
-    'Burqa Collection',
-    'Luxury Burqa Online',
-    'Dubai Abaya',
-    'Korean Crepe Burqa',
-    'Saudi Nida Abaya',
-    'Premium Hijab Online',
-    'Niqab Saudi Style',
+    'Huma Collection',
+    'Hijabs online India',
+    'Abayas online India',
+    'Burqas online India',
+    'Niqabs online India',
+    'Modest fashion India',
     'Non-Alcoholic Attar',
+    'Islamic perfumes',
     'Plush Janamaz',
     'Hajj and Umrah Essentials',
-    'Huma Hijab Collection',
-    'Modest Fashion India',
-    'Modest Fashion Ahmedabad',
+    'Korean Crepe Burqa',
+    'Saudi Nida Abaya',
+    'Dubai Abaya',
     'Burqa Store Ahmedabad',
     'Buy Burqa Online India',
   ],
   authors: [{ name: 'Hamid Shaikh', url: 'https://www.humacollection.in' }],
-  creator: 'Huma Hijab Collection',
-  publisher: 'Huma Hijab Collection',
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://www.humacollection.in'),
-  alternates: {
-    canonical: 'https://www.humacollection.in',
-  },
+  creator: 'Huma Collection',
+  publisher: 'Huma Collection',
+  metadataBase: new URL('https://www.humacollection.in'),
   icons: {
     icon: [
       { url: '/icon.svg', type: 'image/svg+xml' },
@@ -85,16 +82,17 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: 'Huma Hijab Collection | Luxury Burqas & Modest Fashion',
-    description: 'Breathtaking Burqas, Abayas and Islamic essentials crafted with exquisite modesty and imported luxury fabrics.',
+    title: 'Huma Collection | Hijabs, Abayas, Burqas & Islamic Essentials',
+    description:
+      'Discover elegant hijabs, abayas, burqas, niqabs, perfumes, attar and Islamic essentials at Huma Collection. Explore modest fashion and find products that suit your style.',
     url: 'https://www.humacollection.in',
-    siteName: 'Huma Hijab Collection',
+    siteName: 'Huma Collection',
     images: [
       {
         url: 'https://images.unsplash.com/photo-1584282479901-705a6104bc99?auto=format&fit=crop&w=1200&q=85',
         width: 1200,
         height: 630,
-        alt: 'Huma Hijab Collection — Royal Burqa & Modest Fashion Showcase',
+        alt: 'Huma Collection — Hijabs, Abayas, Burqas & Islamic Essentials',
       },
     ],
     locale: 'en_IN',
@@ -102,9 +100,13 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Huma Hijab Collection | Luxury Modest Wear',
-    description: 'Explore our signature Dubai crepe front open and butterfly flare burqas.',
+    title: 'Huma Collection | Hijabs, Abayas, Burqas & Islamic Essentials',
+    description:
+      'Discover elegant hijabs, abayas, burqas, niqabs, perfumes, attar and Islamic essentials at Huma Collection.',
     images: ['https://images.unsplash.com/photo-1584282479901-705a6104bc99?auto=format&fit=crop&w=1200&q=85'],
+  },
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || undefined,
   },
   category: 'clothing',
 };
@@ -120,8 +122,8 @@ export default function RootLayout({
       {
         '@type': 'ClothingStore',
         '@id': 'https://www.humacollection.in/#store',
-        name: 'Huma Hijab Collection',
-        alternateName: ['Huma Burqa & Modest Fashion Boutique', 'Huma Hijab Store'],
+        name: 'Huma Collection',
+        alternateName: ['Huma Hijab Collection', 'Huma Burqa & Modest Fashion Boutique', 'Huma Hijab Store'],
         url: 'https://www.humacollection.in',
         logo: 'https://www.humacollection.in/icon.svg',
         image: 'https://images.unsplash.com/photo-1584282479901-705a6104bc99?auto=format&fit=crop&w=1200&q=85',
@@ -178,8 +180,8 @@ export default function RootLayout({
         '@type': 'WebSite',
         '@id': 'https://www.humacollection.in/#website',
         url: 'https://www.humacollection.in',
-        name: 'Huma Hijab Collection',
-        description: 'Luxury Burqas & Modest Fashion Online',
+        name: 'Huma Collection',
+        description: 'Hijabs, Abayas, Burqas & Islamic Essentials Online',
         publisher: {
           '@id': 'https://www.humacollection.in/#store',
         },
@@ -198,6 +200,8 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${sansFont.variable} ${serifFont.variable} scroll-smooth`}>
       <head>
+        <link rel="preconnect" href="https://api.humacollection.in" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://api.humacollection.in" />
         <link rel="icon" href="/icon.svg" type="image/svg+xml" sizes="any" />
         <link rel="icon" href="/favicon.ico" sizes="32x32" />
         <link rel="apple-touch-icon" href="/icon.svg" />
@@ -212,9 +216,9 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen flex flex-col bg-brand-cream text-brand-obsidian font-sans antialiased selection:bg-brand-gold/30 selection:text-brand-obsidian">
-        {/* Razorpay Checkout Script */}
-        <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
-
+        <Suspense fallback={null}>
+          <NavigationProgress />
+        </Suspense>
         <CartProvider>
           <Navbar />
           <CartDrawer />

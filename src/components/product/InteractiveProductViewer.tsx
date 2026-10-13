@@ -244,16 +244,16 @@ export function InteractiveProductViewer({
     [totalViews, currentIndex, isControlled, onIndexChange]
   );
 
-  // Preload all images into the browser cache to prevent delays and white flash
+  // Preload secondary images on-demand only when user hovers or interacts with the card
   useEffect(() => {
-    if (typeof window === 'undefined' || totalViews <= 1) return;
+    if (typeof window === 'undefined' || totalViews <= 1 || (!isHovered && !hasInteracted && !isDragging)) return;
     normalizedImages.forEach((img) => {
       if (img.url) {
         const imageObj = new window.Image();
         imageObj.src = img.url;
       }
     });
-  }, [normalizedImages, totalViews]);
+  }, [normalizedImages, totalViews, isHovered, hasInteracted, isDragging]);
 
   // Keep internal state aligned if totalViews shrinks
   useEffect(() => {

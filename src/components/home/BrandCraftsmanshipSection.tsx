@@ -1,11 +1,6 @@
-'use client';
-
 import React from 'react';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
-import { ShieldCheck, Sparkles, Scissors, Clock, HeartHandshake, CheckCircle2 } from 'lucide-react';
-
-import { FadeUp, ImageReveal, LUXURY_EASE, StaggerContainer, StaggerItem } from '../ui/Motion';
+import { ShieldCheck, Sparkles, Scissors, HeartHandshake } from 'lucide-react';
 
 export const BrandCraftsmanshipSection: React.FC = () => {
   const highlights = [
@@ -38,29 +33,22 @@ export const BrandCraftsmanshipSection: React.FC = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          {/* Left Column: Visual Collage with ImageReveal */}
+          {/* Left Column: Visual Collage */}
           <div className="lg:col-span-5 relative">
             <div className="relative mx-auto max-w-md">
-              {/* Primary Image with Editorial ImageReveal */}
+              {/* Primary Image */}
               <div className="relative aspect-[4/5] rounded-3xl overflow-hidden border border-brand-gold/30 shadow-2xl">
-                <ImageReveal className="w-full h-full relative">
-                  <Image
-                    src="https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?auto=format&fit=crop&w=800&q=85"
-                    alt="Huma Hijab Collection Master Craftsmanship"
-                    fill
-                    className="object-cover object-top hover:scale-105 transition-transform duration-700 ease-out"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-brand-dark/80 via-transparent to-transparent" />
-                </ImageReveal>
+                <Image
+                  src="https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?auto=format&fit=crop&w=800&q=85"
+                  alt="Huma Collection Master Craftsmanship"
+                  fill
+                  sizes="(max-width: 640px) 90vw, (max-width: 1024px) 40vw, 420px"
+                  className="object-cover object-top hover:scale-105 transition-transform duration-700 ease-out"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-brand-dark/80 via-transparent to-transparent" />
 
                 {/* Floating Seal Badge */}
-                <motion.div
-                  initial={{ opacity: 0, y: 15 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.2 }}
-                  transition={{ duration: 0.6, delay: 0.3, ease: LUXURY_EASE }}
-                  className="absolute bottom-6 inset-x-6 p-4 rounded-2xl bg-white/95 backdrop-blur-md border border-brand-gold/40 text-brand-obsidian shadow-xl"
-                >
+                <div className="absolute bottom-6 inset-x-6 p-4 rounded-2xl bg-white/95 backdrop-blur-md border border-brand-gold/40 text-brand-obsidian shadow-xl">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-brand-gold/20 text-brand-gold-dark flex items-center justify-center shrink-0">
                       <Sparkles className="w-5 h-5" />
@@ -70,30 +58,25 @@ export const BrandCraftsmanshipSection: React.FC = () => {
                       <p className="text-xs text-stone-600">Zero cling, zero see-through compromise</p>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               </div>
 
-              {/* Decorative Secondary Mini Card with subtle float */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9, rotate: 0 }}
-                whileInView={{ opacity: 1, scale: 1, rotate: 3 }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{ duration: 0.7, delay: 0.4, ease: LUXURY_EASE }}
-                className="hidden sm:block absolute -top-6 -right-6 w-36 h-36 rounded-2xl overflow-hidden border-2 border-brand-gold shadow-xl bg-white"
-              >
+              {/* Decorative Secondary Mini Card */}
+              <div className="hidden sm:block absolute -top-6 -right-6 w-36 h-36 rounded-2xl overflow-hidden border-2 border-brand-gold shadow-xl bg-white rotate-3">
                 <Image
                   src="https://images.unsplash.com/photo-1574634534894-89d7576c8259?auto=format&fit=crop&w=400&q=80"
                   alt="Fabric Texture Detail"
                   fill
+                  sizes="144px"
                   className="object-cover"
                 />
-              </motion.div>
+              </div>
             </div>
           </div>
 
           {/* Right Column: Values & Craftsmanship Features */}
           <div className="lg:col-span-7 space-y-8">
-            <FadeUp>
+            <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-gold/15 border border-brand-gold/30 text-brand-gold-dark text-xs font-bold tracking-widest uppercase mb-3">
                 <Scissors className="w-3.5 h-3.5 text-brand-gold" />
                 <span>The Art of Modest Tailoring</span>
@@ -103,31 +86,32 @@ export const BrandCraftsmanshipSection: React.FC = () => {
                 Tailored For Daily Life.
               </h2>
               <p className="text-sm text-stone-600 mt-3 max-w-xl leading-relaxed">
-                For over a decade, Huma Hijab Collection has dressed thousands of sisters across India with modest silhouettes that honor Islamic tradition without sacrificing comfort or luxury.
+                For over a decade, Huma Collection has dressed thousands of sisters across India with modest silhouettes that honor Islamic tradition without sacrificing comfort or luxury.
               </p>
-            </FadeUp>
+            </div>
 
-            {/* Feature Cards Grid with StaggerContainer */}
-            <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Feature Cards Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {highlights.map((item, idx) => {
                 const Icon = item.icon;
                 return (
-                  <StaggerItem key={idx}>
-                    <div className="p-5 rounded-2xl bg-white border border-stone-200/80 shadow-sm hover:shadow-luxury hover:border-brand-gold/50 transition-all duration-300 space-y-2 group hover:-translate-y-0.5">
-                      <div className="w-10 h-10 rounded-xl bg-brand-sand/70 text-brand-gold-dark flex items-center justify-center group-hover:bg-brand-gold group-hover:text-white transition-colors">
-                        <Icon className="w-5 h-5" />
-                      </div>
-                      <h3 className="font-serif text-sm font-bold text-brand-obsidian group-hover:text-brand-gold-dark transition-colors">
-                        {item.title}
-                      </h3>
-                      <p className="text-xs text-stone-600 leading-relaxed">
-                        {item.description}
-                      </p>
+                  <div
+                    key={idx}
+                    className="p-5 rounded-2xl bg-white border border-stone-200/80 shadow-sm hover:shadow-luxury hover:border-brand-gold/50 transition-all duration-300 space-y-2 group hover:-translate-y-0.5"
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-brand-sand/70 text-brand-gold-dark flex items-center justify-center group-hover:bg-brand-gold group-hover:text-white transition-colors">
+                      <Icon className="w-5 h-5" />
                     </div>
-                  </StaggerItem>
+                    <h3 className="font-serif text-sm font-bold text-brand-obsidian group-hover:text-brand-gold-dark transition-colors">
+                      {item.title}
+                    </h3>
+                    <p className="text-xs text-stone-600 leading-relaxed">
+                      {item.description}
+                    </p>
+                  </div>
                 );
               })}
-            </StaggerContainer>
+            </div>
           </div>
         </div>
       </div>

@@ -1,10 +1,5 @@
-'use client';
-
 import React from 'react';
-import Link from 'next/link';
 import { Calendar, Compass, MapPin, Phone, Sparkles, Store } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { LUXURY_EASE } from '../ui/Motion';
 
 interface OnlineShoppingComingSoonProps {
   className?: string;
@@ -18,25 +13,9 @@ export const OnlineShoppingComingSoon: React.FC<OnlineShoppingComingSoonProps> =
     process.env.NEXT_PUBLIC_MAPS_URL || 'https://maps.app.goo.gl/Uocg3MLVbusi17NG6';
   const launchDate = process.env.NEXT_PUBLIC_ONLINE_LAUNCH_DATE || 'November 2026';
 
-  const scrollToCollection = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    const el = document.getElementById('collection');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else {
-      window.location.href = '/burqa';
-    }
-  };
-
   return (
     <section className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ${className}`}>
-      <motion.div
-        initial={{ opacity: 0, y: 24 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.2 }}
-        transition={{ duration: 0.8, ease: LUXURY_EASE }}
-        className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-obsidian via-[#23201D] to-brand-obsidian text-white border-2 border-brand-gold/40 shadow-2xl p-6 sm:p-10 lg:p-12"
-      >
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-obsidian via-[#23201D] to-brand-obsidian text-white border-2 border-brand-gold/40 shadow-2xl p-6 sm:p-10 lg:p-12">
         {/* Ambient Luxury Glow Effects */}
         <div className="absolute -top-24 -right-24 w-80 h-80 bg-brand-gold/20 rounded-full blur-[90px] pointer-events-none" />
         <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-amber-600/15 rounded-full blur-[90px] pointer-events-none" />
@@ -84,7 +63,6 @@ export const OnlineShoppingComingSoon: React.FC<OnlineShoppingComingSoonProps> =
             {/* Primary: Explore Collection Button */}
             <a
               href="#collection"
-              onClick={scrollToCollection}
               className="px-6 py-4 rounded-xl bg-brand-gold hover:bg-brand-gold-light text-brand-obsidian font-bold text-xs sm:text-sm transition-all shadow-lg hover:shadow-gold-glow flex items-center justify-center gap-2 active:scale-95 text-center"
             >
               <Sparkles className="w-4 h-4 text-brand-obsidian" />
@@ -112,7 +90,7 @@ export const OnlineShoppingComingSoon: React.FC<OnlineShoppingComingSoonProps> =
             </a>
           </div>
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 };

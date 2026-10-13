@@ -1,10 +1,15 @@
-import { Metadata } from 'next';
-import Link from 'next/link';
-import { notFound } from 'next/navigation';
-import { ProductCard } from '../../../components/product/ProductCard';
-import { FadeUp, StaggerContainer, StaggerItem } from '../../../components/ui/Motion';
+import type { Metadata } from 'next';
+import { notFound, redirect } from 'next/navigation';
 import { Category, Product } from '../../../types';
 import { FALLBACK_CATEGORIES, FALLBACK_PRODUCTS } from '../../../lib/fallback-data';
+import {
+  SITE_CONFIG,
+  absoluteUrl,
+  buildBreadcrumbJsonLd,
+  buildCollectionPageJsonLd,
+  buildPageMetadata,
+} from '../../../lib/seo';
+import { CategoryPageClient } from './CategoryPageClient';
 
 interface Props {
   params: { slug: string };
@@ -29,7 +34,15 @@ async function getCategoryData(slug: string): Promise<{
     const prodJson = await prodRes.json();
 
     const category = catJson.data || FALLBACK_CATEGORIES.find((c) => c.slug === slug) || null;
-    const products = prodJson.data && prodJson.data.length > 0 ? prodJson.data : FALLBACK_PRODUCTS.filter((p) => p.categorySlug === slug);
+    const products =
+      prodJson.data && prodJson.data.length > 0
+        ? prodJson.data
+        : FALLBACK_PRODUCTS.filter(
+            (p) =>
+              p.categorySlug === slug ||
+              (p as any).category_slug === slug ||
+              (category && (p.categoryId === category.id || (p as any).category_id === category.id))
+          );
 
     return {
       category,
@@ -38,69 +51,84 @@ async function getCategoryData(slug: string): Promise<{
   } catch (err) {
     console.warn('API unavailable for category page, using fallback catalog.');
     const category = FALLBACK_CATEGORIES.find((c) => c.slug === slug) || null;
-    const products = FALLBACK_PRODUCTS.filter((p) => p.categorySlug === slug || (slug === 'burqa' && p.categoryId === 1));
+    const products = FALLBACK_PRODUCTS.filter(
+      (p) =>
+        p.categorySlug === slug ||
+        (p as any).category_slug === slug ||
+        (category && (p.categoryId === category.id || (p as any).category_id === category.id))
+    );
     return { category, products };
   }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { category } = await getCategoryData(params.slug);
-  if (!category) return { title: 'Category Not Found' };
+  // Burqa category has a dedicated canonical route at /burqa
+  if (params.slug === 'burqa') {
+    return buildPageMetadata({
+      title: 'Designer Burqa Collection | Huma Collection',
+      description:
+        'Explore our signature modest burqas. Luxury Korean Crepe front-open, Emirati butterfly flare, and 360-degree umbrella cuts designed with modest proportions.',
+      path: '/burqa',
+    });
+  }
 
-  return {
-    title: category.seoTitle || `${category.name} | Huma Hijab Collection`,
-    description: category.seoDescription || category.description || 'Shop modest collection.',
-    alternates: {
-      canonical: `https://www.humacollection.in/category/${category.slug}`,
-    },
-  };
+  const { category } = await getCategoryData(params.slug);
+  if (!category) {
+    return {
+      title: 'Category Not Found',
+      robots: { index: false, follow: false },
+    };
+  }
+
+  const title = category.seoTitle || `${category.name} | ${SITE_CONFIG.brandName}`;
+  const description =
+    category.seoDescription ||
+    category.description ||
+    `Explore our curated selection of ${category.name} at ${SITE_CONFIG.brandName}. Modest styles and premium fabrics.`;
+
+  return buildPageMetadata({
+    title,
+    description,
+    path: `/category/${category.slug}`,
+    ogImage: category.imageUrl || SITE_CONFIG.defaultOgImage,
+  });
 }
 
-import { CategoryPageClient } from './CategoryPageClient';
-
 export default async function CategoryPage({ params }: Props) {
+  // Route consolidation: redirect /category/burqa to dedicated /burqa landing page
+  if (params.slug === 'burqa') {
+    redirect('/burqa');
+  }
+
   const { category, products } = await getCategoryData(params.slug);
 
   if (!category) {
     notFound();
   }
 
-  const breadcrumbList = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      {
-        '@type': 'ListItem',
-        position: 1,
-        name: 'Home',
-        item: 'https://www.humacollection.in',
-      },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: category.name,
-        item: `https://www.humacollection.in/category/${category.slug}`,
-      },
-    ],
-  };
+  const canonicalPath = `/category/${category.slug}`;
 
-  const collectionSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'CollectionPage',
-    name: `${category.name} | Huma Hijab Collection`,
-    description: category.description || `Shop premium ${category.name} at Huma Hijab Collection`,
-    url: `https://www.humacollection.in/category/${category.slug}`,
-  };
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: 'Home', path: '/' },
+    { name: 'Collections', path: '/collection' },
+    { name: category.name, path: canonicalPath },
+  ]);
+
+  const collectionJsonLd = buildCollectionPageJsonLd(
+    `${category.name} | ${SITE_CONFIG.brandName}`,
+    category.description || `Shop premium ${category.name} at ${SITE_CONFIG.brandName}`,
+    canonicalPath
+  );
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbList) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
       />
       <CategoryPageClient category={category} initialProducts={products} />
     </>

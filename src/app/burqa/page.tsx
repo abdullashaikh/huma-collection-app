@@ -7,11 +7,36 @@ import { Product } from '../../types';
 import { FALLBACK_PRODUCTS } from '../../lib/fallback-data';
 
 export const metadata: Metadata = {
-  title: 'Designer Burqa Collection | Huma Hijab Collection',
+  title: {
+    absolute: 'Designer Burqa Collection | Huma Collection',
+  },
   description:
     'Explore our signature modest burqas. Luxury Korean Crepe front-open, Emirati butterfly flare, and 360-degree umbrella cuts designed with modest proportions.',
   alternates: {
     canonical: 'https://www.humacollection.in/burqa',
+  },
+  openGraph: {
+    title: 'Designer Burqa Collection | Huma Collection',
+    description:
+      'Explore our signature modest burqas. Luxury Korean Crepe front-open, Emirati butterfly flare, and 360-degree umbrella cuts designed with modest proportions.',
+    url: 'https://www.humacollection.in/burqa',
+    siteName: 'Huma Collection',
+    images: [
+      {
+        url: 'https://images.unsplash.com/photo-1584282479901-705a6104bc99?auto=format&fit=crop&w=1200&q=85',
+        width: 1200,
+        height: 630,
+        alt: 'Designer Burqa Collection — Huma Collection',
+      },
+    ],
+    locale: 'en_IN',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Designer Burqa Collection | Huma Collection',
+    description:
+      'Explore our signature modest burqas. Luxury Korean Crepe front-open, Emirati butterfly flare, and 360-degree umbrella cuts designed with modest proportions.',
   },
 };
 
@@ -104,7 +129,7 @@ export default async function BurqaCategoryPage({ searchParams }: BurqaPageProps
   const jsonLdCollection = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: 'Designer Burqa Collection | Huma Hijab Collection',
+    name: 'Designer Burqa Collection | Huma Collection',
     description: 'Explore our signature modest burqas. Luxury Korean Crepe front-open, Emirati butterfly flare, and 360-degree umbrella cuts designed with modest proportions.',
     url: 'https://www.humacollection.in/burqa',
   };

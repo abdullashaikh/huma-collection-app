@@ -73,24 +73,36 @@ export function Navbar() {
     }
   }, []);
 
-  // Fetch live categories from backend API
+  // Fetch live categories from backend API during browser idle time
   useEffect(() => {
+    let isMounted = true;
     async function loadCategories() {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1'}/categories`, {
-          cache: 'no-store',
-        });
-        if (res.ok) {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1'}/categories`);
+        if (res.ok && isMounted) {
           const json = await res.json();
           if (json.data && Array.isArray(json.data) && json.data.length > 0) {
             setCategories(json.data);
           }
         }
       } catch (err) {
-        console.warn('API error fetching navigation categories, keeping fallback list.');
+        // Fallback categories already initialized
       }
     }
-    loadCategories();
+
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      const handle = (window as any).requestIdleCallback(() => loadCategories(), { timeout: 2000 });
+      return () => {
+        isMounted = false;
+        (window as any).cancelIdleCallback(handle);
+      };
+    } else {
+      const timer = setTimeout(loadCategories, 1000);
+      return () => {
+        isMounted = false;
+        clearTimeout(timer);
+      };
+    }
   }, []);
 
   // Filter root categories by audience scope

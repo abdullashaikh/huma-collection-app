@@ -37,7 +37,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
-    refreshCart();
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      const handle = (window as any).requestIdleCallback(() => refreshCart(), { timeout: 2500 });
+      return () => (window as any).cancelIdleCallback(handle);
+    } else {
+      const timer = setTimeout(refreshCart, 1000);
+      return () => clearTimeout(timer);
+    }
   }, []);
 
   const addToCart = async (variantId: number, quantity: number = 1) => {

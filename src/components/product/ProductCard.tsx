@@ -135,7 +135,12 @@ export function ProductCard({ product }: ProductCardProps) {
     return list.slice(0, 4);
   }, [product.variants]);
 
-  const productHref = `/product/${product.slug}`;
+  const isBurqa =
+    product.categorySlug === 'burqa' ||
+    (product as any).category_slug === 'burqa' ||
+    product.categoryId === 1 ||
+    (product as any).category_id === 1;
+  const productHref = isBurqa ? `/burqa/${product.slug}` : `/product/${product.slug}`;
 
   return (
     <div className="group relative flex flex-col bg-white rounded-2xl overflow-hidden border border-stone-200/80 shadow-luxury hover:shadow-luxury-hover hover:-translate-y-1 transition-all duration-500">
@@ -146,7 +151,7 @@ export function ProductCard({ product }: ProductCardProps) {
           images={viewerImages}
           productName={product.name}
           aspectRatio="aspect-[3/4]"
-          priority={product.isFeatured}
+          priority={false}
           is360Sequence={Boolean(product.is_360 || (product.images_360 && product.images_360.length > 0))}
           showIndicators={viewerImages.length > 1}
           show360Badge={Boolean(product.is_360 || (product.images_360 && product.images_360.length > 0))}

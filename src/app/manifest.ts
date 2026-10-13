@@ -1,11 +1,12 @@
 import { MetadataRoute } from 'next';
+import { SITE_CONFIG } from '../lib/seo';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Huma Hijab Collection | Luxury Burqas & Modest Fashion',
-    short_name: 'Huma Hijab',
+    name: 'Huma Collection | Hijabs, Abayas, Burqas & Islamic Essentials',
+    short_name: 'Huma Collection',
     description:
-      'Luxury modest fashion boutique specializing in Saudi Nida burqas, butterfly abayas, premium hijabs, non-alcoholic attars, and pilgrimage essentials.',
+      'Modest fashion store selling hijabs, abayas, burqas, niqabs, perfumes, attar and Islamic essentials in India.',
     start_url: '/',
     display: 'standalone',
     background_color: '#FCFBF9',

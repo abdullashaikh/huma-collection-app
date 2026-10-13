@@ -1,12 +1,7 @@
-'use client';
-
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
-import { Instagram, Play, Heart, ShoppingBag, Sparkles, ExternalLink } from 'lucide-react';
-
-import { FadeUp, LUXURY_EASE } from '../ui/Motion';
+import { Instagram, Play, Heart, ShoppingBag, ExternalLink } from 'lucide-react';
 
 interface ReelItem {
   id: string;
@@ -21,13 +16,11 @@ interface ReelItem {
 }
 
 export const InstagramReelsGallery: React.FC = () => {
-  const [activeReel, setActiveReel] = useState<string | null>(null);
-
   const reels: ReelItem[] = [
     {
       id: 'reel-1',
       creator: 'Huma Signature',
-      handle: '@humahijabcollection',
+      handle: '@humacollection',
       productName: 'Royal Black Dubai Crepe Burqa',
       productSlug: 'royal-black-dubai-crepe-front-open-burqa',
       price: 2799,
@@ -38,7 +31,7 @@ export const InstagramReelsGallery: React.FC = () => {
     {
       id: 'reel-2',
       creator: 'Modest Atelier',
-      handle: '@humahijabcollection',
+      handle: '@humacollection',
       productName: 'Emirati Gold Thread Butterfly Burqa',
       productSlug: 'emirati-hand-embroidered-butterfly-flare-burqa',
       price: 3199,
@@ -49,7 +42,7 @@ export const InstagramReelsGallery: React.FC = () => {
     {
       id: 'reel-3',
       creator: 'Zahra Style',
-      handle: '@humahijabcollection',
+      handle: '@humacollection',
       productName: 'Minimalist Front-Open Dubai Abaya',
       productSlug: 'burqa',
       price: 2499,
@@ -60,7 +53,7 @@ export const InstagramReelsGallery: React.FC = () => {
     {
       id: 'reel-4',
       creator: 'Pure Modesty',
-      handle: '@humahijabcollection',
+      handle: '@humacollection',
       productName: 'Turkish Silk Hijab & Saudi Niqab',
       productSlug: 'burqa',
       price: 1899,
@@ -72,8 +65,8 @@ export const InstagramReelsGallery: React.FC = () => {
 
   return (
     <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      {/* Header with FadeUp entrance */}
-      <FadeUp className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-pink-500/10 via-purple-500/10 to-amber-500/10 border border-pink-500/20 text-brand-obsidian text-xs font-bold tracking-widest uppercase mb-2">
             <Instagram className="w-3.5 h-3.5 text-pink-500" />
@@ -93,20 +86,16 @@ export const InstagramReelsGallery: React.FC = () => {
           rel="noreferrer"
           className="inline-flex items-center gap-2 text-xs font-bold text-brand-obsidian hover:text-brand-gold-dark transition-colors self-start md:self-end"
         >
-          <span>Follow @humahijabcollection</span>
+          <span>Follow @humacollection</span>
           <ExternalLink className="w-3.5 h-3.5" />
         </a>
-      </FadeUp>
+      </div>
 
       {/* 9:16 Video / Reel Cards Carousel */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        {reels.map((reel, idx) => (
-          <motion.div
+        {reels.map((reel) => (
+          <div
             key={reel.id}
-            initial={{ opacity: 0, y: 22 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.15 }}
-            transition={{ duration: 0.6, delay: idx * 0.08, ease: LUXURY_EASE }}
             className="group relative aspect-[9/16] rounded-3xl overflow-hidden bg-brand-obsidian border border-stone-200/80 shadow-luxury hover:shadow-2xl transition-all duration-500"
           >
             {/* Reel Cover Photo */}
@@ -114,6 +103,7 @@ export const InstagramReelsGallery: React.FC = () => {
               src={reel.coverImage}
               alt={reel.productName}
               fill
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 280px"
               className="object-cover object-top transition-transform duration-700 group-hover:scale-105 group-hover:brightness-105"
             />
 
@@ -160,7 +150,7 @@ export const InstagramReelsGallery: React.FC = () => {
                 </Link>
               </div>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
     </section>

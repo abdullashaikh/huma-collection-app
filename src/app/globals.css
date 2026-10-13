@@ -98,3 +98,28 @@ h1, h2, h3, h4, .font-serif {
 .animate-fadeIn {
   animation: fadeIn 0.3s ease-out forwards;
 }
+
+/* Luxury Skeleton Shimmer Animation */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes luxuryGlow {
+  0%, 100% {
+    box-shadow: 0 0 12px rgba(197, 168, 128, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(197, 168, 128, 0.75);
+  }
+}
+
+.animate-luxuryGlow {
+  animation: luxuryGlow 2s ease-in-out infinite;
+}
+

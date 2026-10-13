@@ -1,9 +1,6 @@
-'use client';
-
 import React from 'react';
 import {
   Clock,
-  Compass,
   ExternalLink,
   MapPin,
   MessageCircle,
@@ -13,8 +10,6 @@ import {
   Store,
   User,
 } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { LUXURY_EASE } from '../ui/Motion';
 
 interface StoreVisitSectionProps {
   id?: string;
@@ -31,18 +26,12 @@ export const StoreVisitSection: React.FC<StoreVisitSectionProps> = ({
   const mapsUrl =
     process.env.NEXT_PUBLIC_MAPS_URL || 'https://maps.app.goo.gl/Uocg3MLVbusi17NG6';
   const whatsappUrl = `https://wa.me/91${rawPhone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
-    'Assalamu Alaikum Hamid bhai, I am visiting Huma Hijab Collection and would like to inquire about current in-store piece availability.'
+    'Assalamu Alaikum Hamid bhai, I am visiting Huma Collection and would like to inquire about current in-store piece availability.'
   )}`;
 
   return (
     <section id={id} className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ${className}`}>
-      <motion.div
-        initial={{ opacity: 0, y: 24 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.15 }}
-        transition={{ duration: 0.8, ease: LUXURY_EASE }}
-        className="bg-gradient-to-b from-brand-ivory via-white to-brand-ivory rounded-3xl p-6 sm:p-10 lg:p-12 border border-brand-gold/40 shadow-luxury overflow-hidden relative"
-      >
+      <div className="bg-gradient-to-b from-brand-ivory via-white to-brand-ivory rounded-3xl p-6 sm:p-10 lg:p-12 border border-brand-gold/40 shadow-luxury overflow-hidden relative">
         {/* Subtle decorative glow */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-brand-gold/10 rounded-full blur-[110px] pointer-events-none" />
 
@@ -195,7 +184,7 @@ export const StoreVisitSection: React.FC<StoreVisitSectionProps> = ({
             </div>
           </div>
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 };
