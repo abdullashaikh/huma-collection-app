@@ -126,7 +126,7 @@ export const CategoryShowcase: React.FC<CategoryShowcaseProps> = ({ categories }
               key={cat.id || slug || index}
               initial={{ opacity: 0, y: 22 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.15 }}
+              viewport={{ once: true, amount: 0 }}
               transition={{ duration: 0.6, delay: index * 0.06, ease: LUXURY_EASE }}
               onHoverStart={() => setHoveredSlug(slug)}
               onHoverEnd={() => setHoveredSlug(null)}

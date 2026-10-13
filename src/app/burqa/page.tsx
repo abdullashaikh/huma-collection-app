@@ -2,7 +2,6 @@ import { Filter, SlidersHorizontal, Sparkles } from 'lucide-react';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { ProductCard } from '../../components/product/ProductCard';
-import { StaggerContainer, StaggerItem } from '../../components/ui/Motion';
 import { Product } from '../../types';
 import { FALLBACK_PRODUCTS } from '../../lib/fallback-data';
 
@@ -280,13 +279,13 @@ export default async function BurqaCategoryPage({ searchParams }: BurqaPageProps
               </Link>
             </div>
           ) : (
-            <StaggerContainer className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 animate-fadeIn">
               {products.map((product) => (
-                <StaggerItem key={product.id}>
+                <div key={product.id}>
                   <ProductCard product={product} />
-                </StaggerItem>
+                </div>
               ))}
-            </StaggerContainer>
+            </div>
           )}
         </div>
       </div>

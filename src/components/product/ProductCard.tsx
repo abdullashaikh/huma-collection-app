@@ -99,12 +99,43 @@ export function ProductCard({ product }: ProductCardProps) {
   const skuCode = product.skuBase || (product as any).sku_base || '';
   const shortDesc = product.shortDescription || (product as any).short_description || '';
 
+  // Categories that never have clothing sizing
+  const isSizedCategory = React.useMemo(() => {
+    const slug = (product.categorySlug || (product as any).category_slug || '').toLowerCase();
+    const name = (product.categoryName || '').toLowerCase();
+    if (
+      slug.includes('perfume') ||
+      slug.includes('attar') ||
+      slug.includes('topi') ||
+      slug.includes('tasbih') ||
+      slug.includes('janamaz') ||
+      slug.includes('miswak') ||
+      slug.includes('rumal') ||
+      slug.includes('jewellery') ||
+      name.includes('perfume') ||
+      name.includes('attar') ||
+      name.includes('topi') ||
+      name.includes('tasbih') ||
+      name.includes('janamaz') ||
+      name.includes('miswak') ||
+      name.includes('rumal')
+    ) {
+      return false;
+    }
+    return true;
+  }, [product]);
+
   // WhatsApp Pre-filled order/inquiry generator
   const handleWhatsAppClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     const selectedVariant = product.variants?.find((v) => v.id === selectedVariantId);
-    const sizeLabel = selectedVariant?.size_value ? selectedVariant.size_value.split(' ')[0] : undefined;
+    const rawSize = selectedVariant?.size_value || selectedVariant?.attributes?.size;
+    const sizeLabel =
+      isSizedCategory && rawSize && typeof rawSize === 'string' && rawSize.trim() !== ''
+        ? rawSize.trim().split(' ')[0]
+        : undefined;
+
     const url = buildProductWhatsAppUrl({
       name: product.name,
       slug: product.slug,
@@ -120,20 +151,23 @@ export function ProductCard({ product }: ProductCardProps) {
       ? Math.round(((basePrice - salePrice) / basePrice) * 100)
       : null;
 
-  // Deduplicate variants by unique size label to eliminate duplicate buttons
+  // Deduplicate variants by ONLY genuine, non-empty sizes (never extract from SKU fallback)
   const uniqueVariants = React.useMemo(() => {
-    if (!product.variants || product.variants.length === 0) return [];
+    if (!isSizedCategory || !product.variants || product.variants.length === 0) return [];
     const seen = new Set<string>();
     const list: typeof product.variants = [];
     for (const v of product.variants) {
-      const label = v.size_value ? v.size_value.split(' ')[0] : v.sku.split('-')[3] || 'STD';
-      if (!seen.has(label)) {
-        seen.add(label);
-        list.push(v);
+      const rawSize = v.size_value || v.attributes?.size;
+      if (rawSize && typeof rawSize === 'string' && rawSize.trim() !== '') {
+        const label = rawSize.trim().split(' ')[0];
+        if (label && !seen.has(label)) {
+          seen.add(label);
+          list.push(v);
+        }
       }
     }
     return list.slice(0, 4);
-  }, [product.variants]);
+  }, [product.variants, isSizedCategory]);
 
   const isBurqa =
     product.categorySlug === 'burqa' ||
@@ -197,7 +231,8 @@ export function ProductCard({ product }: ProductCardProps) {
               </p>
               <div className="flex items-center justify-center gap-1.5 flex-wrap">
                 {uniqueVariants.map((v) => {
-                  const sizeLabel = v.size_value ? v.size_value.split(' ')[0] : v.sku.split('-')[3] || 'STD';
+                  const sizeLabel = (v.size_value || v.attributes?.size || '').trim().split(' ')[0];
+                  if (!sizeLabel) return null;
                   return (
                     <span
                       key={v.id}

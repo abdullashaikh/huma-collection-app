@@ -8,8 +8,42 @@ import {
   Star,
   CheckCircle2,
 } from 'lucide-react';
+import { Product } from '../../types';
+import { getMediaUrl } from '../../lib/media';
 
-export const HeroSection: React.FC = () => {
+export interface HeroSectionProps {
+  heroProduct?: Product | null;
+}
+
+const DEFAULT_HERO_ABAYA = {
+  name: 'Classic Shirt-Collar Button-Down Abaya',
+  slug: 'classic-shirt-collar-button-down-abaya',
+  categorySlug: 'abaya',
+  categoryName: 'Abaya',
+  fabric: 'Premium Soft Korean Crepe',
+  basePrice: 2299,
+  salePrice: 1699,
+  imageUrl: 'https://api.humacollection.in/api/v1/media/file/products/abaya-classic-shirt-collar-button-down-abaya-b24b1f70.webp',
+};
+
+export const HeroSection: React.FC<HeroSectionProps> = ({ heroProduct }) => {
+  const isBurqa = (heroProduct?.categorySlug || (heroProduct as any)?.category_slug) === 'burqa';
+  const productHref = heroProduct
+    ? (isBurqa ? `/burqa/${heroProduct.slug}` : `/product/${heroProduct.slug}`)
+    : `/product/${DEFAULT_HERO_ABAYA.slug}`;
+
+  const rawBase = heroProduct?.basePrice ?? (heroProduct as any)?.base_price ?? DEFAULT_HERO_ABAYA.basePrice;
+  const rawSale = heroProduct?.salePrice ?? (heroProduct as any)?.sale_price ?? DEFAULT_HERO_ABAYA.salePrice;
+  const basePrice = Number(rawBase || 0);
+  const salePrice = rawSale !== undefined && rawSale !== null && Number(rawSale) > 0 ? Number(rawSale) : null;
+  const displayPrice = salePrice && salePrice > 0 ? salePrice : basePrice;
+
+  const rawImage = heroProduct?.primary_image_url || heroProduct?.images?.[0]?.s3Url;
+  const imageSrc = (rawImage ? getMediaUrl(rawImage) : null) || DEFAULT_HERO_ABAYA.imageUrl;
+  const title = heroProduct?.name || DEFAULT_HERO_ABAYA.name;
+  const fabricText = heroProduct?.fabric || heroProduct?.materials || DEFAULT_HERO_ABAYA.fabric;
+  const categoryTag = heroProduct?.categoryName ? `Featured ${heroProduct.categoryName}` : 'Featured Abaya Masterpiece';
+
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-brand-ivory via-brand-cream to-brand-sand/30 text-brand-obsidian min-h-[640px] sm:min-h-[700px] flex items-center border-b border-brand-gold/20">
       {/* Ambient Luxury Radial Flares */}
@@ -23,7 +57,7 @@ export const HeroSection: React.FC = () => {
             {/* Top Eyebrow Tag */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-gold/15 border border-brand-gold/40 text-brand-gold-dark text-xs font-semibold tracking-wider shadow-sm">
               <Sparkles className="w-3.5 h-3.5 text-brand-gold animate-spin-slow" />
-              <span>Royal Burqa & Modest Collection 2026</span>
+              <span>Royal Abaya &amp; Modest Collection 2026</span>
             </div>
 
             {/* Main Headline (LCP Element - Statically rendered HTML for instant mobile paint) */}
@@ -84,14 +118,14 @@ export const HeroSection: React.FC = () => {
             <div className="absolute -inset-3 bg-gradient-to-tr from-brand-gold/25 via-brand-sand to-transparent rounded-[4.5rem] blur-xl opacity-80" />
 
             <Link
-              href="/burqa/emirati-hand-embroidered-butterfly-flare-burqa"
+              href={productHref}
               className="relative mx-auto max-w-sm rounded-t-[4rem] sm:rounded-t-[5rem] rounded-b-2xl sm:rounded-b-3xl overflow-hidden border-2 border-brand-gold/30 shadow-2xl bg-white block group cursor-pointer"
-              title="View Royal Emirati Piece Details"
+              title={`View ${title} Details`}
             >
               <div className="relative aspect-[3/4] w-full group">
                 <Image
-                  src="https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?auto=format&fit=crop&w=800&q=85"
-                  alt="Royal Emirati Gold Trim Burqa"
+                  src={imageSrc}
+                  alt={title}
                   fill
                   priority
                   sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 420px"
@@ -104,16 +138,22 @@ export const HeroSection: React.FC = () => {
                   <div className="flex items-center justify-between gap-3">
                     <div className="min-w-0 flex-1">
                       <span className="text-[10px] font-bold tracking-widest text-brand-gold-dark block uppercase">
-                        Signature Masterpiece
+                        {categoryTag}
                       </span>
                       <p className="font-serif text-sm font-bold text-brand-obsidian mt-0.5 leading-snug truncate group-hover:text-brand-gold-dark transition-colors">
-                        Royal Emirati Gold-Trim Burqa
+                        {title}
                       </p>
-                      <p className="text-[11px] text-stone-500">Pure Saudi Nida Crepe</p>
+                      <p className="text-[11px] text-stone-500 truncate">{fabricText}</p>
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <span className="text-sm font-bold text-brand-obsidian">₹2,799</span>
-                      <span className="block text-[11px] text-stone-400 line-through">₹3,499</span>
+                      <span className="text-sm font-bold text-brand-obsidian">
+                        ₹{displayPrice.toLocaleString('en-IN')}
+                      </span>
+                      {salePrice && basePrice > salePrice && (
+                        <span className="block text-[11px] text-stone-400 line-through">
+                          ₹{basePrice.toLocaleString('en-IN')}
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>

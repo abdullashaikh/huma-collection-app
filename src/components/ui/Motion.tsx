@@ -41,7 +41,7 @@ export const SectionReveal: React.FC<SectionRevealProps> = ({
       id={id}
       initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: yOffset }}
       whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.15 }}
+      viewport={{ once: true, amount: 0 }}
       transition={{
         duration: 0.7,
         ease: LUXURY_EASE,
@@ -79,7 +79,7 @@ export const FadeUp: React.FC<FadeUpProps> = ({
     <motion.div
       initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: yOffset }}
       whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
+      viewport={{ once: true, amount: 0 }}
       transition={{
         duration,
         ease: LUXURY_EASE,
@@ -113,7 +113,7 @@ export const FadeIn: React.FC<FadeInProps> = ({
     <motion.div
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
-      viewport={{ once: true, amount: 0.2 }}
+      viewport={{ once: true, amount: 0 }}
       transition={{
         duration,
         ease: 'easeOut',
@@ -128,8 +128,8 @@ export const FadeIn: React.FC<FadeInProps> = ({
 
 /**
  * 4. StaggerContainer & StaggerItem
- * Ideal for product grids, category cards, and testimonials.
- * Staggers children smoothly (70ms default).
+ * Direct performant renderers for product grids and catalog listings.
+ * Ensures zero delay and instant visibility upon navigation.
  */
 interface StaggerContainerProps {
   children: React.ReactNode;
@@ -141,32 +141,8 @@ interface StaggerContainerProps {
 export const StaggerContainer: React.FC<StaggerContainerProps> = ({
   children,
   className = '',
-  staggerDelay = 0.07,
-  delayChildren = 0.05,
 }) => {
-  const shouldReduceMotion = useReducedMotion();
-
-  const containerVariants: Variants = {
-    hidden: {},
-    show: {
-      transition: {
-        staggerChildren: shouldReduceMotion ? 0 : staggerDelay,
-        delayChildren,
-      },
-    },
-  };
-
-  return (
-    <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      whileInView="show"
-      viewport={{ once: true, amount: 0.12 }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  );
+  return <div className={className}>{children}</div>;
 };
 
 interface StaggerItemProps {
@@ -178,27 +154,8 @@ interface StaggerItemProps {
 export const StaggerItem: React.FC<StaggerItemProps> = ({
   children,
   className = '',
-  yOffset = 22,
 }) => {
-  const shouldReduceMotion = useReducedMotion();
-
-  const itemVariants: Variants = {
-    hidden: shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: yOffset },
-    show: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.55,
-        ease: LUXURY_EASE,
-      },
-    },
-  };
-
-  return (
-    <motion.div variants={itemVariants} className={className}>
-      {children}
-    </motion.div>
-  );
+  return <div className={className}>{children}</div>;
 };
 
 /**

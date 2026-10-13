@@ -308,9 +308,9 @@ export const FALLBACK_PRODUCTS: Product[] = [
     seoTitle: 'Classic Shirt-Collar Button-Down Black Abaya | Huma Collection',
     seoDescription: 'Shop our premium Shirt-Collar Button-Down Black Abaya made with luxury Korean crepe fabric at Huma Collection.',
     canonicalUrl: 'https://www.humacollection.in/product/classic-shirt-collar-button-down-abaya',
-    primary_image_url: 'https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?auto=format&fit=crop&w=1200&q=85',
+    primary_image_url: 'https://api.humacollection.in/api/v1/media/file/products/abaya-classic-shirt-collar-button-down-abaya-b24b1f70.webp',
     images: [
-      { id: 13, productId: 5, s3Key: '', s3Url: 'https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?auto=format&fit=crop&w=1200&q=85', altText: 'Classic Shirt Collar Button Down Abaya Front', sortOrder: 1, isPrimary: true, viewType: 'Front View' },
+      { id: 13, productId: 5, s3Key: '', s3Url: 'https://api.humacollection.in/api/v1/media/file/products/abaya-classic-shirt-collar-button-down-abaya-b24b1f70.webp', altText: 'Classic Shirt Collar Button Down Abaya Front', sortOrder: 1, isPrimary: true, viewType: 'Front View' },
     ],
     variants: [
       { id: 13, productId: 5, sku: 'HHC-ABY-001-54-BLK', size_value: '54 (Height 5\'3" - 5\'4")', price: 1699.00, compareAtPrice: 2299.00, stockQuantity: 20, lowStockThreshold: 5, isActive: true },

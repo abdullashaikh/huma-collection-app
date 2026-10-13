@@ -76,9 +76,9 @@ export default function ProductLoading() {
             <div className="space-y-2.5">
               <div className="w-36 h-4 bg-stone-200 rounded animate-pulse" />
               <div className="flex gap-2">
-                {['52', '54', '56', '58'].map((sz) => (
+                {[1, 2, 3, 4].map((i) => (
                   <div
-                    key={sz}
+                    key={i}
                     className="w-14 h-10 rounded-xl bg-stone-200/80 border border-stone-300 relative overflow-hidden"
                   >
                     <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/30 to-transparent" />

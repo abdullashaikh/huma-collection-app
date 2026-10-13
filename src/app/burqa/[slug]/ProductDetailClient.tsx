@@ -144,10 +144,46 @@ export function ProductDetailClient({ product }: { product: ProductItem }) {
     }
   };
 
+  // Check if product belongs to a category where clothing sizing applies
+  const isSizedCategory = useMemo(() => {
+    const slug = (product.categorySlug || '').toLowerCase();
+    const name = (product.categoryName || '').toLowerCase();
+    if (
+      slug.includes('perfume') ||
+      slug.includes('attar') ||
+      slug.includes('topi') ||
+      slug.includes('tasbih') ||
+      slug.includes('janamaz') ||
+      slug.includes('miswak') ||
+      slug.includes('rumal') ||
+      slug.includes('jewellery') ||
+      name.includes('perfume') ||
+      name.includes('attar') ||
+      name.includes('topi') ||
+      name.includes('tasbih') ||
+      name.includes('janamaz') ||
+      name.includes('miswak') ||
+      name.includes('rumal')
+    ) {
+      return false;
+    }
+    return true;
+  }, [product]);
+
+  // Extract variants that genuinely have explicit size specifications
+  const validSizeVariants = useMemo(() => {
+    if (!isSizedCategory || !product.variants || product.variants.length === 0) return [];
+    return product.variants.filter((v) => {
+      const s = v.size_value || v.attributes?.size;
+      return Boolean(s && typeof s === 'string' && s.trim() !== '');
+    });
+  }, [product.variants, isSizedCategory]);
+
+  const rawSelectedSize = selectedVariant?.size_value || selectedVariant?.attributes?.size;
   const selectedSizeLabel =
-    selectedVariant?.attributes?.size ||
-    selectedVariant?.size_value ||
-    (selectedVariant?.sku ? selectedVariant.sku.split('-')[3] : undefined);
+    isSizedCategory && rawSelectedSize && typeof rawSelectedSize === 'string' && rawSelectedSize.trim() !== ''
+      ? rawSelectedSize.trim()
+      : undefined;
 
   const whatsappOrderUrl = useMemo(() => {
     return buildProductWhatsAppUrl({
@@ -285,24 +321,27 @@ export function ProductDetailClient({ product }: { product: ProductItem }) {
             <p className="text-[11px] text-stone-500 mt-1">In-Store Boutique Showcase • Online Shopping Launches November 2026</p>
           </div>
 
-          {/* Sizing & Variant Matrix */}
-          {product.variants && product.variants.length > 0 && (
+          {/* Sizing & Variant Matrix (Only shown if genuine sizing exists) */}
+          {validSizeVariants.length > 0 && (
             <div className="space-y-3 pt-4 border-t border-stone-200/80">
               <div className="flex justify-between items-center text-xs">
-                <span className="font-bold uppercase tracking-wider text-stone-700">Available Sizes (Height)</span>
+                <span className="font-bold uppercase tracking-wider text-stone-700">
+                  Available Sizes {product.categorySlug === 'burqa' ? '(Height)' : ''}
+                </span>
                 <span className="text-stone-500 flex items-center gap-1">
                   <HelpCircle className="w-3.5 h-3.5" /> In-store trial available
                 </span>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                {product.variants.map((v) => {
+                {validSizeVariants.map((v) => {
                   const isSelected = selectedVariant?.id === v.id;
-                  const label = v.attributes?.size || v.size_value || v.sku.split('-')[3] || 'Standard';
+                  const label = v.size_value?.trim() || v.attributes?.size?.trim() || 'Standard';
 
                   return (
                     <button
                       key={v.id}
+                      type="button"
                       onClick={() => setSelectedVariant(v)}
                       className={`p-2.5 rounded-xl border text-center transition-all ${
                         isSelected

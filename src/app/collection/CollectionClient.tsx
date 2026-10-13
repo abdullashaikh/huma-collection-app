@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { AudienceScope, Category, Product } from '../../types';
 import { ProductCard } from '../../components/product/ProductCard';
-import { FadeUp, StaggerContainer, StaggerItem } from '../../components/ui/Motion';
+import { FadeUp } from '../../components/ui/Motion';
 
 const STORE_PHONE = process.env.NEXT_PUBLIC_STORE_PHONE || '8200617009';
 const MAPS_URL = process.env.NEXT_PUBLIC_MAPS_URL || 'https://maps.app.goo.gl/Uocg3MLVbusi17NG6';
@@ -366,13 +366,13 @@ export function CollectionClient({ initialCategories, initialProducts }: Collect
           </button>
         </div>
       ) : (
-        <StaggerContainer className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 animate-fadeIn">
           {filteredProducts.map((product) => (
-            <StaggerItem key={product.id}>
+            <div key={product.id}>
               <ProductCard product={product} />
-            </StaggerItem>
+            </div>
           ))}
-        </StaggerContainer>
+        </div>
       )}
     </div>
   );

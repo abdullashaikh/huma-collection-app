@@ -47,41 +47,76 @@ export const metadata: Metadata = {
 async function getHomeData(): Promise<{
   products: Product[];
   categories: Category[];
+  heroProduct: Product | null;
 }> {
+  const apiUrl = (process.env.NEXT_PUBLIC_API_URL || 'https://api.humacollection.in/api/v1').replace(/\/+$/, '');
   try {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 2500);
 
-    const [prodRes, catRes] = await Promise.all([
-      fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1'}/products?limit=12&sort=bestseller`, {
+    const [prodRes, catRes, abayaRes] = await Promise.all([
+      fetch(`${apiUrl}/products?limit=24&sort=bestseller`, {
         next: { revalidate: 60 },
         signal: controller.signal,
       }),
-      fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1'}/categories`, {
+      fetch(`${apiUrl}/categories`, {
         next: { revalidate: 300 },
+        signal: controller.signal,
+      }),
+      fetch(`${apiUrl}/products?category=abaya&limit=10`, {
+        next: { revalidate: 60 },
         signal: controller.signal,
       }),
     ]);
     clearTimeout(timer);
 
-    const prods = await prodRes.json();
-    const cats = await catRes.json();
+    const prods = await prodRes.json().catch(() => ({ data: [] }));
+    const cats = await catRes.json().catch(() => ({ data: [] }));
+    const abayasData = await abayaRes.json().catch(() => ({ data: [] }));
 
-    const products = prods.data && prods.data.length > 0 ? prods.data : FALLBACK_PRODUCTS;
-    const categories = cats.data && cats.data.length > 0 ? cats.data : FALLBACK_CATEGORIES;
+    const products: Product[] = prods.data && prods.data.length > 0 ? prods.data : FALLBACK_PRODUCTS;
+    const categories: Category[] = cats.data && cats.data.length > 0 ? cats.data : FALLBACK_CATEGORIES;
+    const abayas: Product[] = abayasData.data && abayasData.data.length > 0 ? abayasData.data : [];
+
+    const allCandidates = [...products, ...abayas];
+
+    // Priority for Hero Showcase Product:
+    // 1. Explicit Hero Tag: Product with 'hero' or 'homepage-hero' in its tags (configurable in admin or DB)
+    // 2. Featured Abaya: An Abaya marked with is_featured = 1
+    // 3. Top Abaya: The first active Abaya from boutique inventory
+    // 4. Any product marked with is_featured = 1
+    const heroProduct =
+      allCandidates.find((p) => {
+        const rawTags = Array.isArray(p.tags) ? p.tags.join(' ') : String(p.tags || '');
+        return rawTags.toLowerCase().includes('hero');
+      }) ||
+      abayas.find((p) => Boolean(p.isFeatured || (p as any).is_featured)) ||
+      abayas[0] ||
+      allCandidates.find((p) => {
+        const cat = (p.categorySlug || (p as any).category_slug || '').toLowerCase();
+        return cat.includes('abaya');
+      }) ||
+      FALLBACK_PRODUCTS.find((p) => p.categorySlug === 'abaya') ||
+      null;
 
     return {
       products,
       categories,
+      heroProduct,
     };
   } catch (err) {
     console.warn('API unavailable, falling back to local dataset for home data.');
-    return { products: FALLBACK_PRODUCTS, categories: FALLBACK_CATEGORIES };
+    const fallbackAbaya = FALLBACK_PRODUCTS.find((p) => p.categorySlug === 'abaya') || FALLBACK_PRODUCTS[0];
+    return {
+      products: FALLBACK_PRODUCTS,
+      categories: FALLBACK_CATEGORIES,
+      heroProduct: fallbackAbaya,
+    };
   }
 }
 
 export default async function HomePage() {
-  const { products, categories } = await getHomeData();
+  const { products, categories, heroProduct } = await getHomeData();
 
   // Primary category (Burqa or first published category)
   const primaryCat = categories.find((c) => c.slug === 'burqa') || categories[0];
@@ -149,7 +184,7 @@ export default async function HomePage() {
       />
       <div className="space-y-16 sm:space-y-24 pb-16 bg-brand-cream text-brand-dark">
         {/* 1. Cinematic Hero Section (Server-rendered HTML for instant H1 paint) */}
-        <HeroSection />
+        <HeroSection heroProduct={heroProduct} />
 
         {/* 2. Official Online Shopping Coming Soon Announcement Banner */}
         <OnlineShoppingComingSoon />
