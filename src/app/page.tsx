@@ -157,7 +157,8 @@ export default async function HomePage() {
         {/* 3. Luxury Continuous Marquee Ribbon */}
         <MarqueeBanner />
 
-        {/* 4. PRIMARY FLAGSHIP SHOWCASE */}
+        {/* 4. PRIMARY FLAGSHIP SHOWCASE (Commented out per user request) */}
+        {/*
         <section id="collection" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-gradient-to-b from-brand-ivory via-white to-brand-ivory rounded-3xl p-6 sm:p-10 border border-brand-gold/30 shadow-luxury">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
@@ -186,7 +187,6 @@ export default async function HomePage() {
               </Link>
             </div>
 
-            {/* Product Grid */}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
               {primaryProducts.length > 0 ? (
                 primaryProducts.map((product) => (
@@ -204,13 +204,14 @@ export default async function HomePage() {
             </div>
           </div>
         </section>
+        */}
 
-        {/* 5. Editorial Craftsmanship Section */}
-        <BrandCraftsmanshipSection />
+        {/* 5. Editorial Craftsmanship Section (Commented out per user request) */}
+        {/* <BrandCraftsmanshipSection /> */}
 
         {/* 6. Trending Modest Essentials & Men's Islamic Wear */}
         {otherProducts.length > 0 && (
-          <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <section id="collection" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between mb-8">
               <div>
                 <span className="text-xs font-bold uppercase tracking-widest text-brand-gold-dark">Curated Essentials</span>
