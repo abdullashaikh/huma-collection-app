@@ -8,6 +8,7 @@ import { MarqueeBanner } from '../components/home/MarqueeBanner';
 import { BrandCraftsmanshipSection } from '../components/home/BrandCraftsmanshipSection';
 import { InstagramReelsGallery } from '../components/home/InstagramReelsGallery';
 import { GoogleMapSection } from '../components/home/GoogleMapSection';
+import { GoogleReviewsSection } from '../components/home/GoogleReviewsSection';
 import { Category, Product } from '../types';
 import { FALLBACK_CATEGORIES, FALLBACK_PRODUCTS } from '../lib/fallback-data';
 
@@ -280,6 +281,9 @@ export default async function HomePage() {
 
         {/* 8. Interactive Google Map & Physical Store Visit Section */}
         <GoogleMapSection />
+
+        {/* 9. Verified Customer Reviews & Google Ratings */}
+        <GoogleReviewsSection />
       </div>
     </>
   );
