@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Sparkles } from 'lucide-react';
 import { ProductCard } from '../components/product/ProductCard';
 import { HeroSection } from '../components/home/HeroSection';
 import { OnlineShoppingComingSoon } from '../components/home/OnlineShoppingComingSoon';
@@ -53,10 +53,10 @@ async function getHomeData(): Promise<{
   const apiUrl = (process.env.NEXT_PUBLIC_API_URL || 'https://api.humacollection.in/api/v1').replace(/\/+$/, '');
   try {
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 2500);
+    const timer = setTimeout(() => controller.abort(), 3000);
 
-    const [prodRes, catRes, abayaRes] = await Promise.all([
-      fetch(`${apiUrl}/products?limit=24&sort=bestseller`, {
+    const [prodRes, catRes] = await Promise.all([
+      fetch(`${apiUrl}/products?limit=100`, {
         next: { revalidate: 60 },
         signal: controller.signal,
       }),
@@ -64,35 +64,41 @@ async function getHomeData(): Promise<{
         next: { revalidate: 300 },
         signal: controller.signal,
       }),
-      fetch(`${apiUrl}/products?category=abaya&limit=10`, {
-        next: { revalidate: 60 },
-        signal: controller.signal,
-      }),
     ]);
     clearTimeout(timer);
 
     const prods = await prodRes.json().catch(() => ({ data: [] }));
     const cats = await catRes.json().catch(() => ({ data: [] }));
-    const abayasData = await abayaRes.json().catch(() => ({ data: [] }));
 
-    const products: Product[] = prods.data && prods.data.length > 0 ? prods.data : FALLBACK_PRODUCTS;
-    const categories: Category[] = cats.data && cats.data.length > 0 ? cats.data : FALLBACK_CATEGORIES;
-    const abayas: Product[] = abayasData.data && abayasData.data.length > 0 ? abayasData.data : [];
+    const products: Product[] = prods.data && prods.data.length > 0 ? prods.data : [...FALLBACK_PRODUCTS];
+    const categories: Category[] = cats.data && cats.data.length > 0 ? cats.data : [...FALLBACK_CATEGORIES];
 
-    const allCandidates = [...products, ...abayas];
+    // Ensure every category has required items by supplementing from FALLBACK_PRODUCTS
+    const seenIds = new Set(products.map((p) => p.id));
+    for (const fbItem of FALLBACK_PRODUCTS) {
+      const fbCat = (fbItem.categorySlug || '').toLowerCase();
+      const currentCatCount = products.filter(
+        (p) => (p.categorySlug || (p as any).category_slug || '').toLowerCase() === fbCat
+      ).length;
+      const targetCount = fbCat === 'abaya' ? 4 : 2;
+      if (currentCatCount < targetCount && !seenIds.has(fbItem.id)) {
+        products.push(fbItem);
+        seenIds.add(fbItem.id);
+      }
+    }
+
+    const allCandidates = [...products];
 
     // Priority for Hero Showcase Product:
-    // 1. Explicit Hero Tag: Product with 'hero' or 'homepage-hero' in its tags (configurable in admin or DB)
-    // 2. Featured Abaya: An Abaya marked with is_featured = 1
-    // 3. Top Abaya: The first active Abaya from boutique inventory
-    // 4. Any product marked with is_featured = 1
     const heroProduct =
       allCandidates.find((p) => {
         const rawTags = Array.isArray(p.tags) ? p.tags.join(' ') : String(p.tags || '');
         return rawTags.toLowerCase().includes('hero');
       }) ||
-      abayas.find((p) => Boolean(p.isFeatured || (p as any).is_featured)) ||
-      abayas[0] ||
+      allCandidates.find((p) => {
+        const cat = (p.categorySlug || (p as any).category_slug || '').toLowerCase();
+        return cat.includes('abaya') && Boolean(p.isFeatured || (p as any).is_featured);
+      }) ||
       allCandidates.find((p) => {
         const cat = (p.categorySlug || (p as any).category_slug || '').toLowerCase();
         return cat.includes('abaya');
@@ -119,16 +125,53 @@ async function getHomeData(): Promise<{
 export default async function HomePage() {
   const { products, categories, heroProduct } = await getHomeData();
 
-  // Primary category (Burqa or first published category)
-  const primaryCat = categories.find((c) => c.slug === 'burqa') || categories[0];
+  // 1. Abayas: Show 4 items AT FIRST (per user request)
+  const abayaProducts = products
+    .filter((p) => {
+      const slug = (p.categorySlug || (p as any).category_slug || '').toLowerCase();
+      const name = (p.name || '').toLowerCase();
+      return slug === 'abaya' || p.categoryId === 3 || (p as any).category_id === 3 || name.includes('abaya');
+    })
+    .slice(0, 4);
 
-  const primaryProducts = products.filter(
-    (p) => primaryCat && (p.categoryId === primaryCat.id || (p as any).category_id === primaryCat.id || p.categorySlug === primaryCat.slug)
-  );
+  const selectedAbayaIds = new Set(abayaProducts.map((p) => p.id));
 
-  const otherProducts = products.filter(
-    (p) => !primaryCat || (p.categoryId !== primaryCat.id && (p as any).category_id !== primaryCat.id && p.categorySlug !== primaryCat.slug)
-  );
+  // 2. Each other category: Show 2 items (per user request)
+  const preferredCategoryOrder = ['burqa', 'hijab', 'niqab', 'perfume-attar', 'janamaz', 'topi', 'hajj-umrah', 'tasbih', 'jewellery'];
+
+  const otherCategories = [...categories]
+    .filter((c) => c.slug !== 'abaya' && !c.parentId)
+    .sort((a, b) => {
+      const idxA = preferredCategoryOrder.indexOf(a.slug);
+      const idxB = preferredCategoryOrder.indexOf(b.slug);
+      if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+      if (idxA !== -1) return -1;
+      if (idxB !== -1) return 1;
+      return (a.displayOrder || 0) - (b.displayOrder || 0);
+    });
+
+  const otherCategorized = otherCategories
+    .map((cat) => {
+      const catItems = products
+        .filter((p) => {
+          if (selectedAbayaIds.has(p.id)) return false;
+          const pSlug = (p.categorySlug || (p as any).category_slug || '').toLowerCase();
+          const pId = p.categoryId || (p as any).category_id;
+          const pName = (p.categoryName || '').toLowerCase();
+          return (
+            pSlug === cat.slug.toLowerCase() ||
+            pId === cat.id ||
+            (pName && pName === cat.name.toLowerCase())
+          );
+        })
+        .slice(0, 2);
+
+      return {
+        category: cat,
+        items: catItems,
+      };
+    })
+    .filter((group) => group.items.length > 0);
 
   const faqSchema = {
     '@context': 'https://schema.org',
@@ -245,36 +288,114 @@ export default async function HomePage() {
         {/* 5. Editorial Craftsmanship Section (Commented out per user request) */}
         {/* <BrandCraftsmanshipSection /> */}
 
-        {/* 6. Trending Modest Essentials & Men's Islamic Wear */}
-        {otherProducts.length > 0 && (
-          <section id="collection" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <span className="text-xs font-bold uppercase tracking-widest text-brand-gold-dark">Curated Essentials</span>
-                <h2 className="font-serif text-2xl sm:text-3xl font-bold text-brand-obsidian mt-0.5">
-                  Hijabs, Artisanal Attars, Men&apos;s Topis &amp; Sunnah Essentials
-                </h2>
+        {/* Curated Category Showcase (Abaya: 4 items first, then 2 items for each other category) */}
+        <section id="collection" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-14 sm:space-y-16">
+          {/* Main Showcase Header */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-stone-200/80 pb-6">
+            <div>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-gold/15 border border-brand-gold/30 text-xs font-bold tracking-widest text-brand-gold-dark uppercase mb-2">
+                <Sparkles className="w-3.5 h-3.5 text-brand-gold" />
+                <span>Curated Boutique Catalogue</span>
               </div>
-              <Link
-                href="/collection"
-                className="inline-flex items-center gap-2.5 text-xs font-bold text-brand-obsidian hover:text-brand-gold-dark tracking-wide uppercase group flex-shrink-0 min-h-[44px] px-4 py-2.5 rounded-xl border border-stone-200 bg-white hover:border-brand-gold/60 shadow-sm transition-all active:scale-95"
-              >
-                <span>Explore All Collections</span>
-                <span className="w-7 h-7 rounded-full bg-brand-sand flex items-center justify-center text-brand-obsidian group-hover:bg-brand-gold group-hover:text-white transition-all">
-                  <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-                </span>
-              </Link>
+              <h2 className="font-sans text-2xl sm:text-4xl font-bold tracking-tight text-brand-obsidian">
+                Explore Our Modest Masterpieces
+              </h2>
+              <p className="text-xs sm:text-sm text-stone-600 mt-1 max-w-xl">
+                Master-crafted modest wear, premium Saudi crepe abayas, breathable Turkish hijabs, and authentic Islamic essentials.
+              </p>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-              {otherProducts.map((product) => (
-                <div key={product.id}>
-                  <ProductCard product={product} />
+            <Link
+              href="/collection"
+              className="inline-flex items-center gap-2.5 text-xs font-bold text-brand-obsidian hover:text-brand-gold-dark tracking-wide uppercase group flex-shrink-0 min-h-[44px] px-4 py-2.5 rounded-xl border border-stone-200 bg-white hover:border-brand-gold/60 shadow-sm transition-all active:scale-95 self-start md:self-end"
+            >
+              <span>Explore All Collections</span>
+              <span className="w-7 h-7 rounded-full bg-brand-sand flex items-center justify-center text-brand-obsidian group-hover:bg-brand-gold group-hover:text-white transition-all">
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              </span>
+            </Link>
+          </div>
+
+          {/* 1. Abayas: 4 items AT FIRST */}
+          {abayaProducts.length > 0 && (
+            <div className="space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold uppercase tracking-widest text-brand-gold-dark">
+                      Featured Abayas
+                    </span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-brand-gold/20 text-brand-gold-dark border border-brand-gold/30">
+                      4 Signature Pieces
+                    </span>
+                  </div>
+                  <h3 className="font-sans text-xl sm:text-2xl font-bold text-brand-obsidian mt-0.5 tracking-tight">
+                    Signature Abayas
+                  </h3>
+                  <p className="text-xs sm:text-sm text-stone-500 mt-0.5 max-w-xl">
+                    Fluid silhouettes, imported Korean Crepe, wudu-friendly snap cuffs, and modest drape.
+                  </p>
                 </div>
-              ))}
+                <Link
+                  href="/category/abaya"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-gold-dark hover:text-brand-obsidian transition-colors self-start sm:self-auto"
+                >
+                  <span>View All Abayas</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+                {abayaProducts.map((product) => (
+                  <div key={product.id}>
+                    <ProductCard product={product} />
+                  </div>
+                ))}
+              </div>
             </div>
-          </section>
-        )}
+          )}
+
+          {/* 2. Each Other Category: 2 items */}
+          {otherCategorized.map(({ category, items }) => (
+            <div key={category.id} className="space-y-6 pt-10 border-t border-stone-200/80">
+              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold uppercase tracking-widest text-brand-gold-dark">
+                      {category.audience === 'MEN' ? "Men's Collection" : category.audience === 'ALL' ? "Islamic Essentials" : "Women's Collection"}
+                    </span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-stone-100 text-stone-600 border border-stone-200">
+                      2 Featured Items
+                    </span>
+                  </div>
+                  <h3 className="font-sans text-xl sm:text-2xl font-bold text-brand-obsidian mt-0.5 tracking-tight">
+                    {category.name}
+                  </h3>
+                  {category.description && (
+                    <p className="text-xs sm:text-sm text-stone-500 mt-0.5 max-w-xl">
+                      {category.description}
+                    </p>
+                  )}
+                </div>
+                <Link
+                  href={category.slug === 'burqa' ? '/burqa' : `/category/${category.slug}`}
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-gold-dark hover:text-brand-obsidian transition-colors self-start sm:self-auto"
+                >
+                  <span>View All {category.name}</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+                {items.map((product) => (
+                  <div key={product.id}>
+                    <ProductCard product={product} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </section>
 
         {/* 7. Instagram Lookbook / Reels Gallery in Motion */}
         <InstagramReelsGallery />

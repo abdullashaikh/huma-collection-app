@@ -135,6 +135,70 @@ export function CollectionClient({ initialCategories, initialProducts }: Collect
     return list;
   }, [initialProducts, selectedAudience, selectedCategorySlug, activeCategoryObj, selectedSubcatId, searchQuery, sortBy]);
 
+  // Group products by category when "All Categories" is selected (prevents random display)
+  const categorizedSections = useMemo(() => {
+    if (selectedCategorySlug !== '') return null;
+
+    const categoryOrder = ['abaya', 'burqa', 'hijab', 'niqab', 'perfume-attar', 'janamaz', 'topi', 'hajj-umrah', 'tasbih', 'jewellery'];
+
+    const sortedCategories = [...audienceCategories].sort((a, b) => {
+      const idxA = categoryOrder.indexOf(a.slug);
+      const idxB = categoryOrder.indexOf(b.slug);
+      if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+      if (idxA !== -1) return -1;
+      if (idxB !== -1) return 1;
+      return (a.displayOrder || 0) - (b.displayOrder || 0);
+    });
+
+    const groups: Array<{
+      category: Category;
+      products: Product[];
+    }> = [];
+
+    const matchedProductIds = new Set<number>();
+
+    for (const cat of sortedCategories) {
+      const catProducts = filteredProducts.filter((p) => {
+        const pSlug = (p.categorySlug || (p as any).category_slug || '').toLowerCase();
+        const pId = p.categoryId || (p as any).category_id;
+        const pName = (p.categoryName || '').toLowerCase();
+        return (
+          pSlug === cat.slug.toLowerCase() ||
+          pId === cat.id ||
+          (pName && pName === cat.name.toLowerCase())
+        );
+      });
+
+      if (catProducts.length > 0) {
+        catProducts.forEach((p) => matchedProductIds.add(p.id));
+        groups.push({
+          category: cat,
+          products: catProducts,
+        });
+      }
+    }
+
+    const remaining = filteredProducts.filter((p) => !matchedProductIds.has(p.id));
+    if (remaining.length > 0) {
+      groups.push({
+        category: {
+          id: 9999,
+          parentId: null,
+          name: 'Curated Modest Essentials',
+          slug: 'other',
+          description: 'Handcrafted boutique accessories and essentials',
+          imageUrl: null,
+          displayOrder: 999,
+          seoTitle: null,
+          seoDescription: null,
+        },
+        products: remaining,
+      });
+    }
+
+    return groups;
+  }, [filteredProducts, selectedCategorySlug, audienceCategories]);
+
   const whatsappMessage = encodeURIComponent(
     `Assalamu Alaikum Hamid bhai (Huma Hijab Collection),\n\nI am browsing your online showcase catalog and would like to inquire about availability and fittings at your boutique.\n\nCould you please help me?`
   );
@@ -326,7 +390,7 @@ export function CollectionClient({ initialCategories, initialProducts }: Collect
             <Sparkles className="w-6 h-6 text-brand-gold-dark" />
           </div>
           <div className="space-y-2">
-            <h3 className="font-serif text-xl sm:text-2xl font-bold text-brand-obsidian">
+            <h3 className="font-sans text-xl sm:text-2xl font-bold text-brand-obsidian tracking-tight">
               No matching pieces found
             </h3>
             <p className="text-xs sm:text-sm text-stone-600 leading-relaxed">
@@ -365,7 +429,61 @@ export function CollectionClient({ initialCategories, initialProducts }: Collect
             Clear all filters
           </button>
         </div>
+      ) : categorizedSections && categorizedSections.length > 0 ? (
+        /* Categorized Display Mode: Products organized by category (never random) */
+        <div className="space-y-16 animate-fadeIn">
+          {categorizedSections.map(({ category, products: catProducts }) => (
+            <section
+              key={category.id}
+              className="space-y-6 pt-10 first:pt-0 border-t border-stone-200/80 first:border-0"
+            >
+              {/* Category Header */}
+              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold uppercase tracking-widest text-brand-gold-dark">
+                      {category.audience === 'MEN' ? "Men's Collection" : category.audience === 'ALL' ? "Islamic Essentials" : "Women's Collection"}
+                    </span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-stone-100 text-stone-700 border border-stone-200">
+                      {catProducts.length} {catProducts.length === 1 ? 'Piece' : 'Pieces'}
+                    </span>
+                  </div>
+                  <h2 className="font-sans text-xl sm:text-2xl font-bold text-brand-obsidian mt-0.5 tracking-tight">
+                    {category.name}
+                  </h2>
+                  {category.description && (
+                    <p className="text-xs sm:text-sm text-stone-500 mt-0.5 max-w-xl">
+                      {category.description}
+                    </p>
+                  )}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedCategorySlug(category.slug);
+                    setSelectedSubcatId(null);
+                  }}
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-gold-dark hover:text-brand-obsidian transition-colors self-start sm:self-auto cursor-pointer"
+                >
+                  <span>Filter only {category.name}</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              {/* Category Products Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+                {catProducts.map((product) => (
+                  <div key={product.id}>
+                    <ProductCard product={product} />
+                  </div>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
       ) : (
+        /* Single Filtered Category Grid */
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 animate-fadeIn">
           {filteredProducts.map((product) => (
             <div key={product.id}>
