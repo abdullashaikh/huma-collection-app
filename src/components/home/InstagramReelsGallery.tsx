@@ -111,7 +111,7 @@ export const InstagramReelsGallery: React.FC = () => {
             <div className="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/20 to-transparent opacity-80 group-hover:opacity-85 transition-opacity" />
 
             {/* Top Bar: Instagram Badge & Views */}
-            <div className="absolute top-2.5 inset-x-2 sm:top-3.5 sm:inset-x-3.5 flex items-center justify-between text-white text-[10px] sm:text-xs z-10">
+            <div className="absolute top-2.5 inset-x-2 sm:top-3.5 sm:inset-x-3.5 flex items-center justify-between text-white text-xs z-10">
               <span className="flex items-center gap-1 sm:gap-1.5 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/20 font-medium">
                 <Instagram className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-pink-400" />
                 <span>{reel.views}</span>
@@ -132,7 +132,7 @@ export const InstagramReelsGallery: React.FC = () => {
 
             {/* Bottom Product Details & Direct Link */}
             <div className="absolute inset-x-2 bottom-2 sm:inset-x-3 sm:bottom-3 p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl bg-black/70 backdrop-blur-md border border-white/20 text-white z-10 transition-all duration-300 group-hover:bg-black/85">
-              <span className="text-[10px] sm:text-xs text-brand-gold-light font-medium block truncate">
+              <span className="text-xs text-brand-gold-light font-medium block truncate">
                 {reel.handle}
               </span>
               <h3 className="font-serif text-xs sm:text-sm font-bold text-white mt-0.5 line-clamp-1">
@@ -140,10 +140,10 @@ export const InstagramReelsGallery: React.FC = () => {
               </h3>
 
               <div className="flex items-center justify-between mt-1.5 sm:mt-2 pt-1.5 sm:pt-2 border-t border-white/15 gap-1">
-                <span className="text-xs sm:text-xs font-bold text-brand-gold">₹{reel.price}</span>
+                <span className="text-xs font-bold text-brand-gold">₹{reel.price}</span>
                 <Link
                   href={`/burqa/${reel.productSlug}`}
-                  className="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg bg-brand-gold hover:bg-white text-brand-dark text-[11px] sm:text-xs font-bold transition-colors flex items-center gap-1 shadow-sm flex-shrink-0"
+                  className="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-brand-gold hover:bg-white text-brand-dark text-xs font-bold transition-colors flex items-center gap-1 shadow-sm flex-shrink-0"
                 >
                   <ShoppingBag className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                   <span>Shop<span className="hidden sm:inline"> Look</span></span>

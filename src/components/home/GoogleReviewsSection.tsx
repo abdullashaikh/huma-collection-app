@@ -265,7 +265,7 @@ const ReviewCard: React.FC<ReviewCardProps> = ({ review }) => {
             ))}
           </div>
 
-          <span className="text-[11px] font-medium text-stone-500">
+          <span className="text-xs font-medium text-stone-500">
             {review.relativePublishTime}
           </span>
         </div>
@@ -315,7 +315,7 @@ const ReviewCard: React.FC<ReviewCardProps> = ({ review }) => {
                 {review.authorName}
               </span>
             )}
-            <span className="text-[10px] text-stone-500 flex items-center gap-1">
+            <span className="text-xs text-stone-500 flex items-center gap-1">
               <CheckCircle2 className="w-3 h-3 text-emerald-600 flex-shrink-0" />
               <span>Verified Customer</span>
             </span>

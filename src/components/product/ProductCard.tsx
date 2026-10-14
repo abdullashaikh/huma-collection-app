@@ -226,8 +226,8 @@ export function ProductCard({ product }: ProductCardProps) {
         {uniqueVariants.length > 0 && (
           <div className="absolute inset-x-2 bottom-2 z-10 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none">
             <div className="bg-white/95 backdrop-blur-md rounded-xl p-2.5 shadow-lg border border-stone-200 text-center">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-stone-500 mb-1.5">
-                Available In-Store Sizing
+              <p className="text-xs font-semibold text-stone-700 mb-1.5">
+                Available in-store sizing
               </p>
               <div className="flex items-center justify-center gap-1.5 flex-wrap">
                 {uniqueVariants.map((v) => {
@@ -236,7 +236,7 @@ export function ProductCard({ product }: ProductCardProps) {
                   return (
                     <span
                       key={v.id}
-                      className="text-[11px] font-bold px-2.5 py-1 rounded-md bg-stone-100 text-stone-800 border border-stone-200"
+                      className="text-xs font-semibold px-2.5 py-1 rounded-xl bg-stone-100 text-brand-obsidian border border-stone-200"
                     >
                       {sizeLabel}
                     </span>
@@ -257,7 +257,7 @@ export function ProductCard({ product }: ProductCardProps) {
               {product.categoryName || (product.fabric && product.fabric !== 'N/A' ? product.fabric : 'Modest Essential')}
             </span>
             {product.audience && (
-              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-brand-sand text-stone-700 border border-stone-200 uppercase flex-shrink-0">
+              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-brand-sand text-stone-700 border border-stone-200 flex-shrink-0">
                 {product.audience === 'MEN' ? 'Men' : product.audience === 'ALL' ? 'Shared' : 'Women'}
               </span>
             )}
@@ -265,14 +265,14 @@ export function ProductCard({ product }: ProductCardProps) {
 
           {/* Product Title */}
           <Link href={productHref} className="block mt-1">
-            <h3 className="font-serif text-sm sm:text-base font-semibold text-brand-obsidian line-clamp-1 group-hover:text-brand-gold-dark transition-colors">
+            <h3 className="font-serif text-sm sm:text-base font-semibold text-brand-obsidian line-clamp-2 leading-snug group-hover:text-brand-gold-dark transition-colors">
               {product.name}
             </h3>
           </Link>
 
           {/* Short description */}
           {shortDesc && (
-            <p className="text-[11px] sm:text-xs text-stone-600 line-clamp-1 mt-0.5 sm:mt-1">
+            <p className="text-xs text-stone-600 line-clamp-1 mt-0.5 sm:mt-1">
               {shortDesc}
             </p>
           )}
@@ -287,13 +287,13 @@ export function ProductCard({ product }: ProductCardProps) {
                   ₹{displayPrice.toLocaleString('en-IN')}
                 </span>
                 {salePrice && basePrice > salePrice && (
-                  <span className="text-[10px] sm:text-xs text-stone-400 line-through truncate">
+                  <span className="text-xs text-stone-400 line-through truncate">
                     ₹{basePrice.toLocaleString('en-IN')}
                   </span>
                 )}
               </div>
               {discountPercent && (
-                <span className="text-[10px] sm:text-[11px] font-bold text-red-600">
+                <span className="text-xs font-bold text-red-600">
                   {discountPercent}% OFF
                 </span>
               )}
@@ -301,7 +301,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
             <Link
               href={productHref}
-              className="min-h-[32px] sm:min-h-[36px] px-2.5 sm:px-3 py-1 rounded-lg text-[11px] sm:text-xs font-semibold flex items-center gap-1 bg-stone-100 hover:bg-stone-200 text-stone-700 hover:text-brand-obsidian transition-colors flex-shrink-0"
+              className="min-h-[32px] sm:min-h-[36px] px-2.5 sm:px-3 py-1 rounded-xl text-xs font-semibold flex items-center gap-1 bg-stone-100 hover:bg-stone-200 text-stone-700 hover:text-brand-obsidian transition-colors flex-shrink-0"
               title="View Piece Details"
               aria-label={`View details for ${product.name}`}
             >

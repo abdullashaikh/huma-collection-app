@@ -72,11 +72,11 @@ export function Footer() {
             {/* Official Store Information */}
             <div className="pt-2 text-stone-300 space-y-2 border-t border-stone-800">
               <div>
-                <p className="text-[11px] text-stone-400 font-medium">Boutique Owner</p>
+                <p className="text-xs text-stone-400 font-medium">Boutique Owner</p>
                 <p className="text-sm font-bold text-white tracking-wide">{OWNER_NAME}</p>
               </div>
               <div>
-                <p className="text-[11px] text-stone-400 font-medium">Store Telephone</p>
+                <p className="text-xs text-stone-400 font-medium">Store Telephone</p>
                 <a
                   href={`tel:+91${STORE_PHONE}`}
                   className="text-sm font-bold text-brand-gold hover:text-amber-200 transition-colors inline-flex items-center gap-1.5"
@@ -86,7 +86,7 @@ export function Footer() {
                 </a>
               </div>
               <div>
-                <p className="text-[11px] text-stone-400 font-medium">Store Location</p>
+                <p className="text-xs text-stone-400 font-medium">Store Location</p>
                 <a
                   href={MAPS_URL}
                   target="_blank"

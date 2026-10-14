@@ -58,32 +58,32 @@ export const OnlineShoppingComingSoon: React.FC<OnlineShoppingComingSoonProps> =
             </div>
           </div>
 
-          {/* Right Action CTA Block */}
-          <div className="flex flex-col sm:flex-row lg:flex-col gap-3.5 flex-shrink-0 lg:w-72">
-            {/* Primary: Explore Collection Button */}
+          {/* Right Action CTA Block with Clear Visual Hierarchy (Issue 12) */}
+          <div className="flex flex-col sm:flex-row lg:flex-col gap-3 flex-shrink-0 lg:w-72">
+            {/* Primary Action: Solid Gold Hero CTA */}
             <a
               href="#collection"
-              className="px-6 py-4 rounded-xl bg-brand-gold hover:bg-brand-gold-light text-brand-obsidian font-bold text-xs sm:text-sm transition-all shadow-lg hover:shadow-gold-glow flex items-center justify-center gap-2 active:scale-95 text-center"
+              className="px-6 py-3.5 rounded-xl bg-brand-gold hover:bg-brand-gold-light text-brand-obsidian font-bold text-xs sm:text-sm transition-all shadow-md hover:shadow-gold-glow flex items-center justify-center gap-2 active:scale-95 text-center"
             >
               <Sparkles className="w-4 h-4 text-brand-obsidian" />
               <span>Explore Collection</span>
             </a>
 
-            {/* Secondary: Get Directions Button */}
+            {/* Secondary Action: Muted Translucent Pill */}
             <a
               href={mapsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 font-semibold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 active:scale-95 text-center"
+              className="px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 font-semibold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 active:scale-95 text-center"
             >
               <MapPin className="w-4 h-4 text-brand-gold" />
               <span>Get Directions</span>
             </a>
 
-            {/* Tertiary: Call Store Button */}
+            {/* Tertiary Action: Ghost Link */}
             <a
               href={`tel:+91${phone}`}
-              className="px-6 py-3 rounded-xl bg-stone-900/90 hover:bg-stone-900 text-stone-200 border border-brand-gold/30 font-medium text-xs transition-all flex items-center justify-center gap-2 text-center"
+              className="px-6 py-2.5 rounded-xl bg-transparent hover:bg-white/5 text-stone-300 hover:text-white border border-stone-700/80 font-medium text-xs transition-colors flex items-center justify-center gap-2 text-center"
             >
               <Phone className="w-3.5 h-3.5 text-brand-gold" />
               <span>Call Store: 8200617009</span>

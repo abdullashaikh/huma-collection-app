@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { Product } from '../../types';
 import { getMediaUrl } from '../../lib/media';
+import { WhatsAppIcon, buildProductWhatsAppUrl, openWhatsApp } from '../../lib/whatsapp';
 
 export interface HeroSectionProps {
   heroProduct?: Product | null;
@@ -43,6 +44,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ heroProduct }) => {
   const title = heroProduct?.name || DEFAULT_HERO_ABAYA.name;
   const fabricText = heroProduct?.fabric || heroProduct?.materials || DEFAULT_HERO_ABAYA.fabric;
   const categoryTag = heroProduct?.categoryName ? `Featured ${heroProduct.categoryName}` : 'Featured Abaya Masterpiece';
+  const heroWhatsAppUrl = buildProductWhatsAppUrl({
+    name: title,
+    slug: heroProduct?.slug || DEFAULT_HERO_ABAYA.slug,
+    price: displayPrice,
+  });
 
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-brand-ivory via-brand-cream to-brand-sand/30 text-brand-obsidian min-h-[640px] sm:min-h-[700px] flex items-center border-b border-brand-gold/20">
@@ -96,7 +102,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ heroProduct }) => {
             </div>
 
             {/* Showcase Badges */}
-            <div className="pt-6 grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-4 border-t border-stone-200/80 text-[11px] sm:text-xs text-stone-600">
+            <div className="pt-6 grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-4 border-t border-stone-200/80 text-xs text-stone-600">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-brand-gold-dark flex-shrink-0" />
                 <span className="font-semibold text-stone-800">100% Modest Cut</span>
@@ -117,44 +123,57 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ heroProduct }) => {
             {/* Subtle backlight halo */}
             <div className="absolute -inset-3 bg-gradient-to-tr from-brand-gold/25 via-brand-sand to-transparent rounded-[4.5rem] blur-xl opacity-80" />
 
-            <Link
-              href={productHref}
-              className="relative mx-auto max-w-sm rounded-t-[4rem] sm:rounded-t-[5rem] rounded-b-2xl sm:rounded-b-3xl overflow-hidden border-2 border-brand-gold/30 shadow-2xl bg-white block group cursor-pointer"
-              title={`View ${title} Details`}
-            >
+            <div className="relative mx-auto max-w-sm rounded-3xl overflow-hidden border-2 border-brand-gold/30 shadow-2xl bg-white block group">
               <div className="relative aspect-[3/4] w-full group">
-                <Image
-                  src={imageSrc}
-                  alt={title}
-                  fill
-                  priority
-                  sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 420px"
-                  className="object-cover object-top group-hover:scale-105 transition-transform duration-700 ease-out"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80" />
+                <Link href={productHref} className="block w-full h-full" title={`View ${title} Details`}>
+                  <Image
+                    src={imageSrc}
+                    alt={title}
+                    fill
+                    priority
+                    sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 420px"
+                    className="object-cover object-top group-hover:scale-105 transition-transform duration-700 ease-out"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80" />
+                </Link>
 
                 {/* Floating Product Highlight Tag */}
-                <div className="absolute bottom-4 inset-x-4 p-4 rounded-2xl bg-white/95 backdrop-blur-md border border-brand-gold/30 text-brand-obsidian shadow-xl group-hover:border-brand-gold transition-colors">
-                  <div className="flex items-center justify-between gap-3">
+                <div className="absolute bottom-4 inset-x-3 sm:inset-x-4 p-4 rounded-2xl bg-white/95 backdrop-blur-md border border-brand-gold/30 text-brand-obsidian shadow-xl transition-colors">
+                  <Link href={productHref} className="flex items-start justify-between gap-3 group/info">
                     <div className="min-w-0 flex-1">
-                      <span className="text-[10px] font-bold tracking-widest text-brand-gold-dark block uppercase">
+                      <span className="text-xs font-semibold tracking-wider text-brand-gold-dark block uppercase">
                         {categoryTag}
                       </span>
-                      <p className="font-serif text-sm font-bold text-brand-obsidian mt-0.5 leading-snug truncate group-hover:text-brand-gold-dark transition-colors">
+                      <p className="font-serif text-base sm:text-lg font-bold text-brand-obsidian mt-0.5 leading-snug line-clamp-2 group-hover/info:text-brand-gold-dark transition-colors">
                         {title}
                       </p>
-                      <p className="text-[11px] text-stone-500 truncate">{fabricText}</p>
+                      <p className="text-xs text-stone-600 line-clamp-1 mt-0.5">{fabricText}</p>
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <span className="text-sm font-bold text-brand-obsidian">
+                      <span className="text-base sm:text-lg font-bold text-brand-obsidian block">
                         ₹{displayPrice.toLocaleString('en-IN')}
                       </span>
                       {salePrice && basePrice > salePrice && (
-                        <span className="block text-[11px] text-stone-400 line-through">
+                        <span className="block text-xs text-stone-400 line-through">
                           ₹{basePrice.toLocaleString('en-IN')}
                         </span>
                       )}
                     </div>
+                  </Link>
+
+                  {/* Standardized Prominent WhatsApp Order CTA (Issue 10 & 11) */}
+                  <div className="mt-3 pt-2.5 border-t border-stone-100">
+                    <a
+                      href={heroWhatsAppUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full min-h-[38px] sm:min-h-[40px] px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white shadow-sm hover:shadow transition-all active:scale-[0.98] group/wa"
+                      title={`Order ${title} on WhatsApp`}
+                      aria-label={`Order ${title} on WhatsApp`}
+                    >
+                      <WhatsAppIcon className="w-4 h-4 text-white fill-white transition-transform group-hover/wa:scale-110" />
+                      <span>Order on WhatsApp</span>
+                    </a>
                   </div>
                 </div>
 
@@ -166,7 +185,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ heroProduct }) => {
                   <span className="text-stone-600 font-medium">Boutique Exclusive</span>
                 </div>
               </div>
-            </Link>
+            </div>
           </div>
         </div>
       </div>

@@ -30,9 +30,9 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
   };
 
   const subtitleSizes = {
-    sm: 'text-[9px] tracking-[0.2em]',
-    md: 'text-[10px] sm:text-xs tracking-[0.22em]',
-    lg: 'text-xs sm:text-sm tracking-[0.25em]',
+    sm: 'text-xs tracking-wider',
+    md: 'text-xs tracking-wider',
+    lg: 'text-xs sm:text-sm tracking-wider',
   };
 
   const content = (
@@ -99,7 +99,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
           Huma
         </span>
         <span
-          className={`font-sans ${subtitleSizes[size]} font-semibold uppercase mt-0.5 transition-colors ${
+          className={`font-sans ${subtitleSizes[size]} font-semibold normal-case mt-0.5 transition-colors ${
             isDark
               ? 'text-brand-gold-dark group-hover:text-brand-obsidian'
               : 'text-brand-gold-light/90 group-hover:text-white'
