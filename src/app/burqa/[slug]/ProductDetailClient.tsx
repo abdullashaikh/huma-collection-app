@@ -27,6 +27,7 @@ import { useRouter } from 'next/navigation';
 import React, { useState, useMemo } from 'react';
 import { ProductCard } from '../../../components/product/ProductCard';
 import { InteractiveProductViewer } from '../../../components/product/InteractiveProductViewer';
+import { ProductDescription } from '../../../components/product/ProductDescription';
 import { fetchApi } from '../../../lib/api';
 import { useCart } from '../../../lib/cart-context';
 import { ProductItem } from '../../../types';
@@ -359,7 +360,7 @@ export function ProductDetailClient({ product }: { product: ProductItem }) {
                 </span>
               )}
             </div>
-            <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-brand-obsidian mt-1 leading-tight">
+            <h1 className="font-sans text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-brand-obsidian mt-1 leading-tight">
               {product.name}
             </h1>
             <p className="text-xs text-stone-600 mt-1 flex items-center gap-1.5">
@@ -433,7 +434,7 @@ export function ProductDetailClient({ product }: { product: ProductItem }) {
           <div className="p-3.5 rounded-xl bg-stone-50 border border-stone-200 text-stone-700 space-y-1">
             <div className="flex items-center gap-2">
               <span className="flex h-2 w-2 rounded-full bg-emerald-500 flex-shrink-0" />
-              <span className="font-serif font-bold text-xs uppercase tracking-wider text-stone-900">
+              <span className="font-sans font-bold text-xs uppercase tracking-wider text-stone-900">
                 Boutique Concierge & Assisted Ordering
               </span>
             </div>
@@ -544,10 +545,13 @@ export function ProductDetailClient({ product }: { product: ProductItem }) {
 
       {/* Specifications & Description Tabs */}
       <div className="bg-white rounded-3xl p-6 sm:p-10 border border-stone-200/80 shadow-sm space-y-6">
-        <h2 className="font-serif text-2xl font-bold text-brand-obsidian">About This Piece</h2>
-        <div className="prose prose-stone max-w-none text-xs sm:text-sm leading-relaxed text-stone-600 space-y-4">
-          <p>{product.description}</p>
-        </div>
+        <h2 className="font-sans text-xl sm:text-2xl font-bold tracking-tight text-brand-obsidian">
+          About This Piece
+        </h2>
+        <ProductDescription
+          description={product.description}
+          shortDescription={product.shortDescription}
+        />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 pt-6 border-t border-stone-100 text-xs">
           <div className="p-4 rounded-xl bg-stone-50 min-h-[88px] flex flex-col justify-between">
@@ -599,7 +603,7 @@ export function ProductDetailClient({ product }: { product: ProductItem }) {
       {/* Recommended Related Pieces */}
       {product.relatedProducts && product.relatedProducts.length > 0 && (
         <section className="space-y-6">
-          <h2 className="font-serif text-2xl font-bold text-brand-obsidian">You May Also Admire</h2>
+          <h2 className="font-sans text-xl sm:text-2xl font-bold tracking-tight text-brand-obsidian">You May Also Admire</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
             {product.relatedProducts.map((p) => (
               <ProductCard key={p.id} product={p} />

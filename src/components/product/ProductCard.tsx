@@ -265,14 +265,14 @@ export function ProductCard({ product }: ProductCardProps) {
 
           {/* Product Title */}
           <Link href={productHref} className="block mt-1">
-            <h3 className="font-serif text-sm sm:text-base font-semibold text-brand-obsidian line-clamp-2 leading-snug group-hover:text-brand-gold-dark transition-colors">
+            <h3 className="font-sans text-sm sm:text-base font-semibold text-stone-900 line-clamp-2 leading-snug tracking-tight group-hover:text-brand-gold-dark transition-colors">
               {product.name}
             </h3>
           </Link>
 
           {/* Short description */}
           {shortDesc && (
-            <p className="text-xs text-stone-600 line-clamp-1 mt-0.5 sm:mt-1">
+            <p className="font-sans text-xs text-stone-500 line-clamp-1 mt-0.5 sm:mt-1 font-normal leading-normal">
               {shortDesc}
             </p>
           )}

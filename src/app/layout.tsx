@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Suspense } from 'react';
-import { Plus_Jakarta_Sans, Playfair_Display } from 'next/font/google';
+import { Plus_Jakarta_Sans } from 'next/font/google';
 import { CartDrawer } from '../components/cart/CartDrawer';
 import { FloatingWhatsApp } from '../components/layout/FloatingWhatsApp';
 import { Footer } from '../components/layout/Footer';
@@ -20,15 +20,8 @@ export const viewport: Viewport = {
 
 const sansFont = Plus_Jakarta_Sans({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
+  weight: ['400', '500', '600', '700', '800'],
   variable: '--font-sans',
-  display: 'swap',
-});
-
-const serifFont = Playfair_Display({
-  subsets: ['latin'],
-  weight: ['600', '700'],
-  variable: '--font-serif',
   display: 'swap',
 });
 
@@ -198,7 +191,7 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" className={`${sansFont.variable} ${serifFont.variable} scroll-smooth`}>
+    <html lang="en" className={`${sansFont.variable} scroll-smooth`}>
       <head>
         <link rel="preconnect" href="https://api.humacollection.in" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://api.humacollection.in" />

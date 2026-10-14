@@ -67,9 +67,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ heroProduct }) => {
             </div>
 
             {/* Main Headline (LCP Element - Statically rendered HTML for instant mobile paint) */}
-            <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-brand-obsidian leading-[1.12]">
+            <h1 className="font-sans text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-brand-obsidian leading-[1.15]">
               Grace In Every Fold, <br />
-              <span className="italic font-serif text-brand-gold-dark">
+              <span className="text-brand-gold-dark">
                 Pure Modesty
               </span>{' '}
               In Every Thread.
@@ -144,10 +144,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ heroProduct }) => {
                       <span className="text-xs font-semibold tracking-wider text-brand-gold-dark block uppercase">
                         {categoryTag}
                       </span>
-                      <p className="font-serif text-base sm:text-lg font-bold text-brand-obsidian mt-0.5 leading-snug line-clamp-2 group-hover/info:text-brand-gold-dark transition-colors">
+                      <p className="font-sans text-base sm:text-lg font-bold text-brand-obsidian mt-0.5 leading-snug line-clamp-2 tracking-tight group-hover/info:text-brand-gold-dark transition-colors">
                         {title}
                       </p>
-                      <p className="text-xs text-stone-600 line-clamp-1 mt-0.5">{fabricText}</p>
+                      <p className="font-sans text-xs text-stone-500 line-clamp-1 mt-0.5 font-normal">{fabricText}</p>
                     </div>
                     <div className="text-right flex-shrink-0">
                       <span className="text-base sm:text-lg font-bold text-brand-obsidian block">

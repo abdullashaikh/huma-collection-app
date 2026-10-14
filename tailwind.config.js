@@ -25,7 +25,7 @@ module.exports = {
         },
       },
       fontFamily: {
-        serif: ['var(--font-serif)', 'Playfair Display', 'Georgia', 'serif'],
+        serif: ['var(--font-sans)', 'Plus Jakarta Sans', 'system-ui', 'sans-serif'],
         sans: ['var(--font-sans)', 'Plus Jakarta Sans', 'system-ui', 'sans-serif'],
       },
       animation: {
