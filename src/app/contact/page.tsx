@@ -6,14 +6,14 @@ import { SITE_CONFIG, buildBreadcrumbJsonLd, buildPageMetadata } from '../../lib
 export const metadata: Metadata = buildPageMetadata({
   title: 'Contact Us | Huma Collection — Boutique & Customer Inquiries',
   description:
-    'Contact Huma Collection in Ahmedabad. Call +91 82006 17009 or visit our boutique on Relief Road near Teen Darwaza for modest fashion consultations.',
+    'Contact Huma Collection in Vyara, Gujarat. Call +91 82006 17009 or visit our boutique near Markaz Masjid for modest fashion consultations.',
   path: '/contact',
   keywords: [
     'Contact Huma Collection',
     'Huma Collection phone number',
-    'Burqa shop Relief Road Ahmedabad',
+    'Burqa shop Vyara Gujarat',
     'Hamid Shaikh contact',
-    'Ahmedabad modest fashion store directions',
+    'Vyara modest fashion store directions',
   ],
 });
 
@@ -51,7 +51,7 @@ export default function ContactPage() {
             Contact Huma Collection
           </h1>
           <p className="text-stone-600 text-sm sm:text-base leading-relaxed">
-            Whether you have questions about fabric drape, need custom sizing advice (sizes 50 to 60), or wish to visit our physical boutique in Ahmedabad, we are here to assist you.
+            Whether you have questions about fabric drape, need custom sizing advice (sizes 50 to 60), or wish to visit our physical boutique in Vyara, Gujarat, we are here to assist you.
           </p>
         </header>
 

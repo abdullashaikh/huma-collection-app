@@ -10,19 +10,21 @@ export const SITE_CONFIG = {
   storePhone: process.env.NEXT_PUBLIC_STORE_PHONE || '8200617009',
   storePhoneFormatted: process.env.NEXT_PUBLIC_STORE_PHONE_FORMATTED || '+91 82006 17009',
   whatsappNumber: (process.env.NEXT_PUBLIC_WHATSAPP || '+918200617009').replace(/[^0-9]/g, ''),
-  mapsUrl: process.env.NEXT_PUBLIC_MAPS_URL || 'https://maps.app.goo.gl/Uocg3MLVbusi17NG6',
+  mapsUrl:
+    process.env.NEXT_PUBLIC_MAPS_URL ||
+    'https://www.google.com/maps/search/?api=1&query=Huma+Collection,+Near+Markaz+Masjid,+Vyara,+Gujarat+394650',
   onlineLaunchDate: process.env.NEXT_PUBLIC_ONLINE_LAUNCH_DATE || 'November 2026',
   locale: 'en_IN',
   address: {
-    streetAddress: 'Relief Road, Near Teen Darwaza',
-    addressLocality: 'Ahmedabad',
+    streetAddress: 'Near Markaz Masjid',
+    addressLocality: 'Vyara',
     addressRegion: 'Gujarat',
-    postalCode: '380001',
+    postalCode: '394650',
     addressCountry: 'IN',
   },
   geo: {
-    latitude: '23.0225',
-    longitude: '72.5714',
+    latitude: '21.1126',
+    longitude: '73.3934',
   },
   defaultOgImage: 'https://images.unsplash.com/photo-1584282479901-705a6104bc99?auto=format&fit=crop&w=1200&q=85',
 };

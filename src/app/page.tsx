@@ -1,13 +1,14 @@
 import type { Metadata } from 'next';
-import { ArrowRight, CheckCircle2, ChevronRight, Sparkles, Star } from 'lucide-react';
 import Link from 'next/link';
+import { ChevronRight } from 'lucide-react';
 import { ProductCard } from '../components/product/ProductCard';
 import { HeroSection } from '../components/home/HeroSection';
 import { OnlineShoppingComingSoon } from '../components/home/OnlineShoppingComingSoon';
 import { MarqueeBanner } from '../components/home/MarqueeBanner';
 import { BrandCraftsmanshipSection } from '../components/home/BrandCraftsmanshipSection';
 import { InstagramReelsGallery } from '../components/home/InstagramReelsGallery';
-import { StoreVisitSection } from '../components/home/StoreVisitSection';
+import { GoogleMapSection } from '../components/home/GoogleMapSection';
+import { GoogleReviewsSection } from '../components/home/GoogleReviewsSection';
 import { Category, Product } from '../types';
 import { FALLBACK_CATEGORIES, FALLBACK_PRODUCTS } from '../lib/fallback-data';
 
@@ -278,79 +279,11 @@ export default async function HomePage() {
         {/* 7. Instagram Lookbook / Reels Gallery in Motion */}
         <InstagramReelsGallery />
 
-        {/* 8. Physical Store Visit & Direct Boutique Contact Section */}
-        <StoreVisitSection />
+        {/* 8. Interactive Google Map & Physical Store Visit Section */}
+        <GoogleMapSection />
 
-        {/* 9. Customer Testimonials & Trust Proof */}
-        <section className="bg-gradient-to-b from-brand-ivory via-white to-brand-ivory text-brand-obsidian py-16 sm:py-20 relative overflow-hidden border-y border-brand-gold/20">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-brand-gold/10 rounded-full blur-[100px] pointer-events-none" />
-
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="text-center max-w-xl mx-auto mb-12 space-y-2">
-              <span className="text-xs font-bold uppercase tracking-widest text-brand-gold-dark">Trusted By Modest Sisters</span>
-              <h2 className="font-serif text-2xl sm:text-4xl font-bold text-brand-obsidian">
-                Words From Our Customers
-              </h2>
-              <p className="text-xs sm:text-sm text-stone-600">Real verified feedback from sisters across India</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
-                <div className="p-6 rounded-2xl bg-white border border-stone-200/90 space-y-3 shadow-md hover:shadow-xl hover:border-brand-gold/40 hover:-translate-y-1 transition-all duration-300">
-                  <div className="flex text-amber-500">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-amber-400" />
-                    ))}
-                  </div>
-                  <h3 className="font-serif font-bold text-base text-brand-obsidian">“The drape is unmatched”</h3>
-                  <p className="text-xs text-stone-600 leading-relaxed font-normal">
-                    Experienced the Royal Black Dubai Crepe Front Open Burqa in person. The Korean crepe fabric is so soft, breathable, and never sticks. The complimentary matching shayla was a wonderful touch.
-                  </p>
-                  <div className="pt-2 text-xs font-semibold text-brand-gold-dark flex items-center gap-1.5 border-t border-stone-100">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>Ayesha Siddiqui • Mumbai (Verified Customer)</span>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <div className="p-6 rounded-2xl bg-white border border-stone-200/90 space-y-3 shadow-md hover:shadow-xl hover:border-brand-gold/40 hover:-translate-y-1 transition-all duration-300">
-                  <div className="flex text-amber-500">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-amber-400" />
-                    ))}
-                  </div>
-                  <h3 className="font-serif font-bold text-base text-brand-obsidian">“Golden embroidery is stunning”</h3>
-                  <p className="text-xs text-stone-600 leading-relaxed font-normal">
-                    Wore the Emirati butterfly burqa for my cousin&apos;s Walima. Received endless compliments. The sweep and flare is so graceful without being heavy.
-                  </p>
-                  <div className="pt-2 text-xs font-semibold text-brand-gold-dark flex items-center gap-1.5 border-t border-stone-100">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>Shabana Parveen • Hyderabad (Verified Customer)</span>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <div className="p-6 rounded-2xl bg-white border border-stone-200/90 space-y-3 shadow-md hover:shadow-xl hover:border-brand-gold/40 hover:-translate-y-1 transition-all duration-300">
-                  <div className="flex text-amber-500">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-amber-400" />
-                    ))}
-                  </div>
-                  <h3 className="font-serif font-bold text-base text-brand-obsidian">“Exceptional Boutique Experience”</h3>
-                  <p className="text-xs text-stone-600 leading-relaxed font-normal">
-                    Visited the boutique store directly. The fabric quality, custom height tailoring assistance, and guidance from the team were exceptional. The padded memory foam janamaz and artisanal Oud attar are pure perfection!
-                  </p>
-                  <div className="pt-2 text-xs font-semibold text-brand-gold-dark flex items-center gap-1.5 border-t border-stone-100">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>Farida Bano • Delhi (Verified In-Store Customer)</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+        {/* 9. Live Google Customer Reviews & Ratings */}
+        <GoogleReviewsSection />
       </div>
     </>
   );
