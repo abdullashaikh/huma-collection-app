@@ -185,6 +185,68 @@ export function ProductDetailClient({ product }: { product: ProductItem }) {
       ? rawSelectedSize.trim()
       : undefined;
 
+  // Sanitize colors: filter out "[object Object]", stringified garbage, and extract valid color names
+  const displayColors = useMemo(() => {
+    const rawList = Array.isArray(product.colors)
+      ? product.colors
+      : product.colors
+      ? [product.colors]
+      : [];
+    const cleaned: string[] = [];
+
+    for (const item of rawList) {
+      if (!item) continue;
+      if (typeof item === 'object') {
+        const val = (item as any).name || (item as any).color || (item as any).label || (item as any).value;
+        if (typeof val === 'string' && val.trim() && !val.includes('[object Object]')) {
+          cleaned.push(val.trim());
+        }
+      } else if (typeof item === 'string') {
+        const trimmed = item.trim();
+        if (trimmed && !trimmed.includes('[object Object]')) {
+          try {
+            const parsed = JSON.parse(trimmed);
+            if (parsed && typeof parsed === 'object') {
+              const val = parsed.name || parsed.color || parsed.label || parsed.value;
+              if (val && typeof val === 'string' && !val.includes('[object Object]')) {
+                cleaned.push(val.trim());
+                continue;
+              }
+            }
+          } catch {
+            // not JSON
+          }
+          cleaned.push(trimmed);
+        }
+      }
+    }
+
+    // Fallback: If raw colors contained only [object Object], deduce color from product name
+    if (cleaned.length === 0 && product.name) {
+      const palette = [
+        'Lavender', 'Black', 'White', 'Taupe Grey', 'Grey', 'Navy Blue', 'Maroon',
+        'Emerald Green', 'Sage Green', 'Champagne', 'Periwinkle', 'Pink', 'Rose Gold', 'Beige'
+      ];
+      for (const col of palette) {
+        if (new RegExp(`\\b${col}\\b`, 'i').test(product.name)) {
+          cleaned.push(col);
+          break;
+        }
+      }
+    }
+
+    return cleaned;
+  }, [product.colors, product.name]);
+
+  // Clean tags: parse and filter out invalid values
+  const displayTags = useMemo(() => {
+    if (!product.tags) return [];
+    const raw = Array.isArray(product.tags) ? product.tags : [product.tags];
+    return raw
+      .map((t) => (typeof t === 'string' ? t.trim() : ''))
+      .filter((t) => t.length > 0 && !t.includes('[object Object]'));
+  }, [product.tags]);
+
   const whatsappOrderUrl = useMemo(() => {
     return buildProductWhatsAppUrl({
       name: product.name,
@@ -192,9 +254,9 @@ export function ProductDetailClient({ product }: { product: ProductItem }) {
       sku: selectedVariant?.sku || product.skuBase,
       price: currentPrice,
       size: selectedSizeLabel,
-      color: product.colors?.[0] || undefined,
+      color: displayColors[0] || undefined,
     });
-  }, [product, selectedVariant, currentPrice, selectedSizeLabel]);
+  }, [product, selectedVariant, currentPrice, selectedSizeLabel, displayColors]);
 
   const handleOrderOnWhatsApp = () => {
     openWhatsApp(whatsappOrderUrl);
@@ -300,7 +362,10 @@ export function ProductDetailClient({ product }: { product: ProductItem }) {
             <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-brand-obsidian mt-1 leading-tight">
               {product.name}
             </h1>
-            <p className="text-xs text-stone-500 mt-1 font-mono">SKU: {selectedVariant?.sku || product.skuBase}</p>
+            <p className="text-xs text-stone-600 mt-1 flex items-center gap-1.5">
+              <span className="font-sans font-medium text-stone-500">SKU:</span>
+              <span className="font-mono text-stone-700 tracking-wide">{selectedVariant?.sku || product.skuBase}</span>
+            </p>
 
             {/* Price Row */}
             <div className="flex items-baseline gap-3 mt-4">
@@ -318,7 +383,11 @@ export function ProductDetailClient({ product }: { product: ProductItem }) {
                 </span>
               )}
             </div>
-            <p className="text-[11px] text-stone-500 mt-1">In-Store Boutique Showcase • Online Shopping Launches November 2026</p>
+            {/* Boutique Availability Status Badge */}
+            <div className="inline-flex items-center gap-2 mt-3 px-3 py-1.5 rounded-xl bg-stone-100/90 border border-stone-200 text-xs text-stone-700 font-medium">
+              <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse flex-shrink-0" />
+              <span>In-Store Boutique Showcase &bull; Online Direct Order Launches Nov 2026</span>
+            </div>
           </div>
 
           {/* Sizing & Variant Matrix (Only shown if genuine sizing exists) */}
@@ -360,26 +429,26 @@ export function ProductDetailClient({ product }: { product: ProductItem }) {
             </div>
           )}
 
-          {/* Order Method Notice */}
-          <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-50 to-teal-50/50 border border-emerald-200/80 text-emerald-950 space-y-1.5 shadow-sm">
+          {/* Boutique Concierge Service Notice */}
+          <div className="p-3.5 rounded-xl bg-stone-50 border border-stone-200 text-stone-700 space-y-1">
             <div className="flex items-center gap-2">
-              <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="font-serif font-bold text-xs uppercase tracking-wider text-emerald-900">
-                Direct WhatsApp Ordering Active
+              <span className="flex h-2 w-2 rounded-full bg-emerald-500 flex-shrink-0" />
+              <span className="font-serif font-bold text-xs uppercase tracking-wider text-stone-900">
+                Boutique Concierge & Assisted Ordering
               </span>
             </div>
-            <p className="text-xs text-emerald-800 leading-relaxed">
-              We currently accept all orders and styling inquiries directly via <strong>WhatsApp</strong> and in-person at our Ahmedabad boutique. Tap below to chat with {STORE_OWNER_NAME} for instant size guidance, payment, and fast shipping!
+            <p className="text-xs text-stone-600 leading-relaxed">
+              Personal styling guidance, custom sizing, and order fulfillment are coordinated directly with {STORE_OWNER_NAME} with insured shipping across India.
             </p>
           </div>
 
           {/* Action CTAs: Primary WhatsApp Button + Secondary Call & Maps */}
           <div className="space-y-3 pt-2">
-            {/* High-Converting WhatsApp Order CTA */}
+            {/* Primary WhatsApp Order CTA */}
             <button
               type="button"
               onClick={handleOrderOnWhatsApp}
-              className="w-full py-4 px-6 rounded-2xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-sm sm:text-base flex items-center justify-center gap-3 shadow-lg shadow-[#25D366]/25 hover:shadow-xl hover:shadow-[#25D366]/30 transition-all duration-300 active:scale-[0.98] group"
+              className="w-full py-4 px-6 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-sm sm:text-base flex items-center justify-center gap-3 shadow-md hover:shadow-lg transition-all active:scale-[0.98] group"
             >
               <WhatsAppIcon className="w-6 h-6 text-white fill-white transition-transform group-hover:scale-110 flex-shrink-0" />
               <div className="text-left flex-1 min-w-0">
@@ -389,7 +458,7 @@ export function ProductDetailClient({ product }: { product: ProductItem }) {
                     Instant Chat
                   </span>
                 </div>
-                <p className="text-[11px] font-normal text-white/90 truncate">
+                <p className="text-xs font-normal text-white/90 truncate">
                   {selectedSizeLabel ? `Selected Size: ${selectedSizeLabel} • ` : ''}Chat with {STORE_OWNER_NAME}
                 </p>
               </div>
@@ -398,7 +467,7 @@ export function ProductDetailClient({ product }: { product: ProductItem }) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <a
                 href={`tel:+91${phone}`}
-                className="py-3.5 px-4 rounded-xl bg-brand-obsidian hover:bg-stone-900 text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm transition-all active:scale-95"
+                className="py-3.5 px-4 rounded-xl bg-brand-obsidian hover:bg-stone-900 text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-2xs transition-all active:scale-95"
               >
                 <Phone className="w-4 h-4 text-brand-gold" />
                 <span>Call Boutique (+91 {phone})</span>
@@ -408,21 +477,24 @@ export function ProductDetailClient({ product }: { product: ProductItem }) {
                 href={mapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="py-3.5 px-4 rounded-xl bg-brand-ivory hover:bg-brand-sand border border-brand-gold/40 text-brand-obsidian font-bold text-xs flex items-center justify-center gap-2 transition-all active:scale-95 shadow-sm"
+                className="py-3.5 px-4 rounded-xl bg-white hover:bg-stone-50 border border-stone-200 text-stone-800 font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all active:scale-95 shadow-2xs"
               >
                 <MapPin className="w-4 h-4 text-brand-gold-dark" />
                 <span>Get Directions (Google Maps)</span>
               </a>
             </div>
 
-            {/* Share link */}
-            <div className="flex justify-end pt-1">
+            {/* Tactile Share Button */}
+            <div className="flex items-center justify-between pt-1">
+              <span className="text-xs text-stone-500">Need a second opinion?</span>
               <button
+                type="button"
                 onClick={handleShare}
-                className="text-xs text-stone-500 hover:text-stone-800 flex items-center gap-1.5 transition-colors"
+                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-xs font-semibold text-stone-700 hover:text-brand-obsidian transition-colors shadow-2xs active:scale-95"
+                aria-label="Share this product"
               >
-                <Share2 className="w-3.5 h-3.5" />
-                <span>{copiedLink ? 'Link Copied!' : 'Share Product'}</span>
+                <Share2 className="w-3.5 h-3.5 text-stone-500" />
+                <span>{copiedLink ? 'Link Copied to Clipboard!' : 'Share Product'}</span>
               </button>
             </div>
           </div>
@@ -478,38 +550,47 @@ export function ProductDetailClient({ product }: { product: ProductItem }) {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 pt-6 border-t border-stone-100 text-xs">
-          <div className="p-4 rounded-xl bg-stone-50">
+          <div className="p-4 rounded-xl bg-stone-50 min-h-[88px] flex flex-col justify-between">
             <span className="font-bold text-stone-500 uppercase tracking-wider block text-[10px]">Fabric / Material</span>
             <span className="font-semibold text-brand-obsidian mt-1 block">
               {product.materials || product.fabric || 'Pure Modest Textile'}
             </span>
           </div>
-          <div className="p-4 rounded-xl bg-stone-50">
+          <div className="p-4 rounded-xl bg-stone-50 min-h-[88px] flex flex-col justify-between">
             <span className="font-bold text-stone-500 uppercase tracking-wider block text-[10px]">Cut & Silhouette</span>
             <span className="font-semibold text-brand-obsidian mt-1 block">{product.style || 'Front Open Abaya-Cut'}</span>
           </div>
-          <div className="p-4 rounded-xl bg-stone-50">
+          <div className="p-4 rounded-xl bg-stone-50 min-h-[88px] flex flex-col justify-between">
             <span className="font-bold text-stone-500 uppercase tracking-wider block text-[10px]">Care Instructions</span>
             <span className="font-semibold text-brand-obsidian mt-1 block">{product.careInstructions || 'Gentle wash cold / steam reverse'}</span>
           </div>
-          <div className="p-4 rounded-xl bg-stone-50">
+          <div className="p-4 rounded-xl bg-stone-50 min-h-[88px] flex flex-col justify-between">
             <span className="font-bold text-stone-500 uppercase tracking-wider block text-[10px]">Exchange Policy</span>
             <span className="font-semibold text-brand-obsidian mt-1 block">7-Day Free Size Exchange</span>
           </div>
-          {product.colors && (
-            <div className="p-4 rounded-xl bg-stone-50">
+          {displayColors.length > 0 && (
+            <div className="p-4 rounded-xl bg-stone-50 min-h-[88px] flex flex-col justify-between">
               <span className="font-bold text-stone-500 uppercase tracking-wider block text-[10px]">Available Colors</span>
               <span className="font-semibold text-brand-obsidian mt-1 block">
-                {Array.isArray(product.colors) ? product.colors.join(', ') : String(product.colors)}
+                {displayColors.join(', ')}
               </span>
             </div>
           )}
-          {product.tags && (
-            <div className="p-4 rounded-xl bg-stone-50">
-              <span className="font-bold text-stone-500 uppercase tracking-wider block text-[10px]">Tags</span>
-              <span className="font-semibold text-brand-obsidian mt-1 block">
-                {Array.isArray(product.tags) ? product.tags.join(', ') : String(product.tags)}
+          {displayTags.length > 0 && (
+            <div className="col-span-full p-4 rounded-xl bg-stone-50 flex flex-col sm:flex-row sm:items-center gap-2.5">
+              <span className="font-bold text-stone-500 uppercase tracking-wider text-[10px] flex-shrink-0">
+                Product Tags
               </span>
+              <div className="flex flex-wrap gap-1.5">
+                {displayTags.map((tag, idx) => (
+                  <span
+                    key={idx}
+                    className="px-2.5 py-1 rounded-lg bg-white border border-stone-200 text-xs text-stone-700 font-medium"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
             </div>
           )}
         </div>
@@ -542,7 +623,7 @@ export function ProductDetailClient({ product }: { product: ProductItem }) {
           {/* Quick Call icon button */}
           <a
             href={`tel:+91${phone}`}
-            className="w-11 h-11 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-800 flex items-center justify-center flex-shrink-0 shadow-sm active:scale-95 transition-all border border-stone-200"
+            className="w-11 h-11 rounded-xl bg-white hover:bg-stone-50 text-stone-800 flex items-center justify-center flex-shrink-0 shadow-2xs active:scale-95 transition-all border border-stone-200"
             title="Call Boutique"
             aria-label="Call Store"
           >

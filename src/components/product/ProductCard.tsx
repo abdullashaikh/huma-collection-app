@@ -252,12 +252,12 @@ export function ProductCard({ product }: ProductCardProps) {
       <div className="p-3 sm:p-4 flex flex-col flex-1 justify-between">
         <div>
           {/* Category / Fabric label + Audience Badge */}
-          <div className="flex items-center justify-between gap-1">
-            <span className="text-xs font-semibold text-brand-gold-dark tracking-wide truncate">
+          <div className="flex items-start justify-between gap-1.5 min-h-[1.25rem]">
+            <span className="text-xs font-semibold text-brand-gold-dark tracking-wide leading-snug">
               {product.categoryName || (product.fabric && product.fabric !== 'N/A' ? product.fabric : 'Modest Essential')}
             </span>
             {product.audience && (
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-brand-sand text-stone-700 border border-stone-200 flex-shrink-0">
+              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-brand-sand text-stone-700 border border-stone-200 flex-shrink-0 mt-0.5">
                 {product.audience === 'MEN' ? 'Men' : product.audience === 'ALL' ? 'Shared' : 'Women'}
               </span>
             )}
